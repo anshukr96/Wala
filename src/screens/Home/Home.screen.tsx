@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { fetchUser, selectAll } from '../../stores/user.reducer';
 import styles from './Home.style';
 
-const Home = ({ navigation }: any) => {
+const Home = () => {
   const dispatch = useAppDispatch();
   const users = useAppSelector(selectAll);
 
