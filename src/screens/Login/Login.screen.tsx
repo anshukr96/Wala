@@ -1,18 +1,25 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import PrimaryButton from '../../components/Button';
+
+import PrimaryButton from '../../components/Button/PrimaryButton';
 import PrimaryInput from '../../components/Input';
+import { RootStackParamList } from '../../navigation/navigation';
+
+import commonStyles from '../common.styles';
 import styles from './Login.styles';
 
-export default function Login() {
+type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
+
+export default function Login({ navigation }: Props) {
   const [text, onChangeText] = useState('');
   const [isOTP, setIsOTP] = useState(false);
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={styles.SafeAreaView1} />
-      <SafeAreaView style={styles.SafeAreaView2} />
+      <SafeAreaView style={commonStyles.SafeAreaView1} />
+      <SafeAreaView style={commonStyles.SafeAreaView2} />
 
       <Text style={styles.header}>Wala</Text>
 
@@ -37,7 +44,7 @@ export default function Login() {
           <View style={{ width: '94%', marginLeft: 12, marginVertical: 8 }}>
             <PrimaryButton
               title={isOTP ? 'VERIFY OTP' : 'SEND OTP'}
-              onPress={() => setIsOTP(otp => !otp)}
+              onPress={() => navigation.navigate('Feed')}
             />
           </View>
         </View>

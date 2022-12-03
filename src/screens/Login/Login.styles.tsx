@@ -6,8 +6,6 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  SafeAreaView1: { flex: 0 },
-  SafeAreaView2: { flex: 1 },
   input: {
     height: 40,
     margin: 12,

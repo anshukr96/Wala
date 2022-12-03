@@ -3,11 +3,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Feed from '../screens/Feed/Feed.screen';
 import Home from '../screens/Home/Home.screen';
 import Login from '../screens/Login/Login.screen';
 import Profile from '../screens/Profile/Profile.screen';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  Login: undefined;
+  Feed: undefined;
+  HomeBase: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
@@ -45,6 +52,11 @@ const MainNavigation = () => {
           name="Login"
           options={{ headerShown: false }}
           component={Login}
+        />
+        <Stack.Screen
+          name="Feed"
+          options={{ headerShown: false }}
+          component={Feed}
         />
         <Stack.Screen
           name="HomeBase"
