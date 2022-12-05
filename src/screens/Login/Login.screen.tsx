@@ -1,7 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import PrimaryInput from '../../components/Input';
