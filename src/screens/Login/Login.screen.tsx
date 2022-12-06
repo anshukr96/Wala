@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import PrimaryInput from '../../components/Input';
@@ -10,7 +10,6 @@ import {
   RootStackParamList,
 } from '../../navigation/navigation';
 
-import commonStyles from '../common.styles';
 import styles from './Login.styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -22,9 +21,6 @@ export default function Login({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={commonStyles.SafeAreaView1} />
-      <SafeAreaView style={commonStyles.SafeAreaView2} />
-
       <Text style={styles.header}>Wala</Text>
 
       <View style={styles.inputWrapper}>

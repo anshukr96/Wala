@@ -1,11 +1,13 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import React from 'react';
+import AddNetwork from '../../screens/AddNetwork/AddNetwork';
 import Feed, { FeedHeader } from '../../screens/Feed/Feed.screen';
 import MyProfile from '../../screens/MyProfile/Profile.screen';
 
 export type DrawerParamList = {
   Feed: undefined;
   MyProfile: undefined;
+  AddNetwork: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -21,6 +23,7 @@ const FeedDrawerMenu = () => {
           headerRight: () => <FeedHeader />,
         }}
       />
+      <Drawer.Screen name="AddNetwork" component={AddNetwork} />
       <Drawer.Screen name="MyProfile" component={MyProfile} />
     </Drawer.Navigator>
   );

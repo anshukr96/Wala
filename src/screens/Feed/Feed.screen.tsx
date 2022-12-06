@@ -4,7 +4,7 @@ import { Alert, SafeAreaView, StatusBar, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import SecondaryButton from '../../components/Button/SecondaryButton';
-import { DrawerParamList } from '../../navigation/navigation';
+import { DrawerParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
 import commonStyles from '../common.styles';
 import FeedStyles from './Feed.style';
 
@@ -27,7 +27,7 @@ const Feed = ({ navigation }: Props) => {
           <PrimaryButton
             title="ADD NETWORK"
             style={FeedStyles.addNetworkButton}
-            onPress={() => Alert.alert('add netowrk')}
+            onPress={() => navigation.navigate('AddNetwork')}
           />
         </View>
       </View>
