@@ -4,7 +4,11 @@ import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import PrimaryInput from '../../components/Input';
-import { RootStackParamList } from '../../navigation/navigation';
+import {
+  AuthContext,
+  AuthContextInterface,
+  RootStackParamList,
+} from '../../navigation/navigation';
 
 import commonStyles from '../common.styles';
 import styles from './Login.styles';
@@ -14,6 +18,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 export default function Login({ navigation }: Props) {
   const [text, onChangeText] = useState('');
   const [isOTP, setIsOTP] = useState(false);
+  const { signIn } = React.useContext(AuthContext) as AuthContextInterface;
 
   return (
     <View style={styles.container}>
@@ -43,7 +48,10 @@ export default function Login({ navigation }: Props) {
           <View style={{ width: '94%', marginLeft: 12, marginVertical: 8 }}>
             <PrimaryButton
               title={isOTP ? 'VERIFY OTP' : 'SEND OTP'}
-              onPress={() => navigation.navigate('Feed')}
+              onPress={() => {
+                setIsOTP(true);
+                signIn({ username: 'anshu', password: 'password' });
+              }}
             />
           </View>
         </View>
