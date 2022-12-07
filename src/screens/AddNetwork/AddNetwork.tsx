@@ -1,18 +1,20 @@
 import { Picker } from '@react-native-picker/picker';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import {
   CodeField,
   Cursor,
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
+import Icon from 'react-native-vector-icons/Ionicons';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 
 import { ALUMNI_LIST, SOCIETY_LIST } from '../../Data/NetowrkList';
 import CreaterModal from '../../Modal/Modal';
 import NetworkAddModal from '../../Modal/NetworkAddModal';
+import NoNetworkPopup from '../../Modal/NoNetworkPopup';
 import { DrawerParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
 import styles from './AddNetwork.styles';
 
@@ -22,6 +24,7 @@ type Props = DrawerScreenProps<DrawerParamList, 'AddNetwork'>;
 export default function AddNetwork({ navigation }: Props) {
   const [value, setValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isNoNetworkAdded, setIsNoNetworkAdded] = useState(false);
   const [selectedList, setSelectedList] = useState();
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -64,8 +67,19 @@ export default function AddNetwork({ navigation }: Props) {
 
   const showAfterNetworkAdded = () => {
     return (
-      <CreaterModal onModalClose={() => setIsSubmitted(false)}>
+      <CreaterModal onModalClose={() => setIsNoNetworkAdded(false)}>
         <NetworkAddModal
+          onNavigateToHome={() => navigation.goBack()}
+          onNetworkAdded={() => navigation.navigate('Feed')}
+        />
+      </CreaterModal>
+    );
+  };
+
+  const noNetworkAdded = () => {
+    return (
+      <CreaterModal onModalClose={() => setIsSubmitted(false)}>
+        <NoNetworkPopup
           onNavigateToHome={() => navigation.goBack()}
           onNetworkAdded={() => navigation.navigate('Feed')}
         />
@@ -75,7 +89,12 @@ export default function AddNetwork({ navigation }: Props) {
 
   return (
     <View style={{ margin: 10 }}>
-      <Text style={styles.headerText}>Add Network</Text>
+      <View>
+        <Pressable onPress={() => setIsNoNetworkAdded(true)}>
+          <Icon name={'arrow-back-outline'} size={24} color={'black'} />
+        </Pressable>
+        <Text style={styles.headerText}>Add Network</Text>
+      </View>
 
       <View style={{ margin: 10 }}>
         <Text style={styles.subtitle}>
@@ -131,6 +150,7 @@ export default function AddNetwork({ navigation }: Props) {
       </View>
 
       {isSubmitted && showAfterNetworkAdded()}
+      {isNoNetworkAdded && noNetworkAdded()}
     </View>
   );
 }

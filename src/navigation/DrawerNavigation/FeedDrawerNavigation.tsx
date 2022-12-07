@@ -2,7 +2,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import AddNetwork from '../../screens/AddNetwork/AddNetwork';
-import Feed, { FeedHeader } from '../../screens/Feed/Feed.screen';
+import Feed from '../../screens/Feed/Feed.screen';
 import MyProfile from '../../screens/MyProfile/Profile.screen';
 
 export type DrawerParamList = {
@@ -21,16 +21,8 @@ const Stack = createNativeStackNavigator<StackParamList>();
 
 const FeedStackScreen = () => {
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Listing"
-        component={Feed}
-        options={{
-          headerTitle: '',
-          headerTransparent: true,
-          headerRight: () => <FeedHeader />,
-        }}
-      />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Listing" component={Feed} />
       <Stack.Screen name="AddNetwork" component={AddNetwork} />
     </Stack.Navigator>
   );

@@ -7,8 +7,10 @@ const FeedStyles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   outerWrapper: {
-    flexDirection: 'row-reverse',
-    marginHorizontal: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: 16,
   },
   ctaWrapper: {
     justifyContent: 'center',
