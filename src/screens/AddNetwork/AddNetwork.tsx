@@ -1,4 +1,5 @@
 import { Picker } from '@react-native-picker/picker';
+import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import {
@@ -10,12 +11,17 @@ import {
 import PrimaryButton from '../../components/Button/PrimaryButton';
 
 import { ALUMNI_LIST, SOCIETY_LIST } from '../../Data/NetowrkList';
+import CreaterModal from '../../Modal/Modal';
+import NetworkAddModal from '../../Modal/NetworkAddModal';
+import { DrawerParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
 import styles from './AddNetwork.styles';
 
 const CELL_COUNT = 4;
+type Props = DrawerScreenProps<DrawerParamList, 'AddNetwork'>;
 
-export default function AddNetwork() {
+export default function AddNetwork({ navigation }: Props) {
   const [value, setValue] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [selectedList, setSelectedList] = useState();
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -50,13 +56,25 @@ export default function AddNetwork() {
           />
         </View>
         <View style={styles.submitCTA}>
-          <PrimaryButton title="Submit" onPress={() => console.log('submit')} />
+          <PrimaryButton title="Submit" onPress={() => setIsSubmitted(true)} />
         </View>
       </>
     );
   };
+
+  const showAfterNetworkAdded = () => {
+    return (
+      <CreaterModal onModalClose={() => setIsSubmitted(false)}>
+        <NetworkAddModal
+          onNavigateToHome={() => navigation.goBack()}
+          onNetworkAdded={() => navigation.navigate('Feed')}
+        />
+      </CreaterModal>
+    );
+  };
+
   return (
-    <View style={{ margin: 20 }}>
+    <View style={{ margin: 10 }}>
       <Text style={styles.headerText}>Add Network</Text>
 
       <View style={{ margin: 10 }}>
@@ -75,7 +93,11 @@ export default function AddNetwork() {
                 setSelectedList(itemValue)
               }>
               {SOCIETY_LIST.map(list => (
-                <Picker.Item label={list.label} value={list.value} />
+                <Picker.Item
+                  label={list.label}
+                  value={list.value}
+                  key={list.label}
+                />
               ))}
             </Picker>
           </View>
@@ -93,7 +115,11 @@ export default function AddNetwork() {
               setSelectedList(itemValue)
             }>
             {ALUMNI_LIST.map(list => (
-              <Picker.Item label={list.label} value={list.value} />
+              <Picker.Item
+                label={list.label}
+                value={list.value}
+                key={list.label}
+              />
             ))}
           </Picker>
         </View>
@@ -103,6 +129,8 @@ export default function AddNetwork() {
         <Text>Can't find your network?</Text>
         <Text>Submit a request to add a new network</Text>
       </View>
+
+      {isSubmitted && showAfterNetworkAdded()}
     </View>
   );
 }

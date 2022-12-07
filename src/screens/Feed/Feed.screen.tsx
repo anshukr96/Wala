@@ -4,11 +4,11 @@ import { Alert, SafeAreaView, StatusBar, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import SecondaryButton from '../../components/Button/SecondaryButton';
-import { DrawerParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
+import { StackParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
 import commonStyles from '../common.styles';
 import FeedStyles from './Feed.style';
 
-type Props = DrawerScreenProps<DrawerParamList, 'Feed'>;
+type Props = DrawerScreenProps<StackParamList, 'Listing'>;
 
 const Feed = ({ navigation }: Props) => {
   const [feedList, setFeedList] = useState([]);

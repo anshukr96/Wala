@@ -7,6 +7,7 @@ const FeedStyles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   outerWrapper: {
+    flexDirection: 'row-reverse',
     marginHorizontal: 16,
   },
   ctaWrapper: {

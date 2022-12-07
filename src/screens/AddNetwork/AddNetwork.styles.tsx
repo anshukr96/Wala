@@ -5,10 +5,10 @@ export default StyleSheet.create({
   title: { textAlign: 'center', fontSize: 16 },
   codeFieldRoot: { marginTop: 20, justifyContent: 'center' },
   cell: {
-    width: 32,
-    height: 32,
+    width: 36,
+    height: 36,
     lineHeight: 38,
-    fontSize: 24,
+    fontSize: 20,
     borderWidth: 2,
     borderColor: '#00000030',
     textAlign: 'center',

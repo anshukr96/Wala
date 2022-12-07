@@ -1,14 +1,21 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-interface PrimaryButtonProps {
+interface OutlineButtonProps {
   title: string;
   onPress: () => void;
+  style?: Record<string, string>;
 }
 
-export default function PrimaryButton({ title, onPress }: PrimaryButtonProps) {
+export default function OutlineButton({
+  title,
+  onPress,
+  style,
+}: OutlineButtonProps) {
   return (
-    <Pressable style={styles.button} onPress={onPress}>
+    <Pressable
+      style={style ? { ...styles.button, ...style } : { ...styles.button }}
+      onPress={onPress}>
       <Text style={styles.text}>{title}</Text>
     </Pressable>
   );
@@ -18,16 +25,19 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
-    borderRadius: 8,
+    padding: 10,
+    paddingHorizontal: 16,
+    borderColor: '#088F8F',
+    borderWidth: 1,
+    borderRadius: 4,
     elevation: 3,
-    backgroundColor: '#0096FF',
+    backgroundColor: 'white',
   },
   text: {
     fontSize: 16,
     lineHeight: 21,
     fontWeight: 'bold',
     letterSpacing: 0.25,
-    color: 'white',
+    color: '#088F8F',
   },
 });
