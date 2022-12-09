@@ -1,17 +1,17 @@
 export const SOCIETY_LIST = [
   {
     label: 'Godrej Woodsman Estate',
-    value: 'Godrej',
+    value: 'Godrej Woodsman Estate',
   },
   {
     label: 'Brigade Cosmopolis',
-    value: 'Brigade',
+    value: 'Brigade Cosmopolis',
   },
 ];
 
 export const ALUMNI_LIST = [
   {
     label: 'Indian School of Business',
-    value: 'ISB',
+    value: 'Indian School of Business',
   },
 ];

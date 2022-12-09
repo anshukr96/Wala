@@ -29,9 +29,15 @@ export default StyleSheet.create({
     marginRight: 40,
     marginVertical: 15,
   },
+  dropdownContainer: {
+    borderWidth: 1,
+    borderColor: '#D3D3D3',
+    borderRadius: 12,
+    textAlignVertical: 'center',
+  },
   pickerContainer: {
     width: '100%',
-    height: 40,
+    height: 50,
     color: '#344953',
   },
   headerText: {

@@ -16,16 +16,21 @@ import CreaterModal from '../../Modal/Modal';
 import NetworkAddModal from '../../Modal/NetworkAddModal';
 import NoNetworkPopup from '../../Modal/NoNetworkPopup';
 import { DrawerParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
+import { NETWORK_LIST, NETWORK_TYPE } from '../../utils/constants';
 import styles from './AddNetwork.styles';
 
 const CELL_COUNT = 4;
 type Props = DrawerScreenProps<DrawerParamList, 'AddNetwork'>;
+interface NetworkDetail {
+  type: NETWORK_TYPE;
+  value: string;
+}
 
 export default function AddNetwork({ navigation }: Props) {
   const [value, setValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isNoNetworkAdded, setIsNoNetworkAdded] = useState(false);
-  const [selectedList, setSelectedList] = useState();
+  const [selectedList, setSelectedList] = useState<NetworkDetail>();
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
@@ -78,10 +83,10 @@ export default function AddNetwork({ navigation }: Props) {
 
   const noNetworkAdded = () => {
     return (
-      <CreaterModal onModalClose={() => setIsSubmitted(false)}>
+      <CreaterModal onModalClose={() => setIsNoNetworkAdded(false)}>
         <NoNetworkPopup
           onNavigateToHome={() => navigation.goBack()}
-          onNetworkAdded={() => navigation.navigate('Feed')}
+          onNetworkAdded={() => setIsNoNetworkAdded(false)}
         />
       </CreaterModal>
     );
@@ -103,13 +108,16 @@ export default function AddNetwork({ navigation }: Props) {
 
         <View style={{ marginVertical: 20 }}>
           <Text>Residential Society</Text>
-          <View>
+          <View style={styles.dropdownContainer}>
             <Picker
-              selectedValue={selectedList}
+              selectedValue={selectedList?.value}
               mode={'dropdown'}
               style={styles.pickerContainer}
-              onValueChange={(itemValue, itemIndex) =>
-                setSelectedList(itemValue)
+              onValueChange={(itemValue, _) =>
+                setSelectedList({
+                  type: NETWORK_LIST.RESIDENTIAL,
+                  value: itemValue,
+                })
               }>
               {SOCIETY_LIST.map(list => (
                 <Picker.Item
@@ -122,25 +130,30 @@ export default function AddNetwork({ navigation }: Props) {
           </View>
         </View>
 
-        {renderPin()}
+        {selectedList?.type == NETWORK_LIST.RESIDENTIAL && renderPin()}
 
         <View style={{ marginVertical: 20 }}>
           <Text>Alumni Network</Text>
-          <Picker
-            selectedValue={selectedList}
-            style={styles.pickerContainer}
-            mode={'dropdown'}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedList(itemValue)
-            }>
-            {ALUMNI_LIST.map(list => (
-              <Picker.Item
-                label={list.label}
-                value={list.value}
-                key={list.label}
-              />
-            ))}
-          </Picker>
+          <View style={styles.dropdownContainer}>
+            <Picker
+              selectedValue={selectedList?.value}
+              style={styles.pickerContainer}
+              mode={'dropdown'}
+              onValueChange={(itemValue, _) =>
+                setSelectedList({
+                  type: NETWORK_LIST.RESIDENTIAL,
+                  value: itemValue,
+                })
+              }>
+              {ALUMNI_LIST.map(list => (
+                <Picker.Item
+                  label={list.label}
+                  value={list.value}
+                  key={list.label}
+                />
+              ))}
+            </Picker>
+          </View>
         </View>
       </View>
 
