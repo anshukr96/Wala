@@ -7,14 +7,15 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "pod-clean": "cd ios && rm -rf Pods && pod cache clean --all && pod install && cd .."
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.11",
     "@react-native-masked-view/masked-view": "^0.2.8",
     "@react-native-picker/picker": "^2.4.8",
     "@react-navigation/bottom-tabs": "^6.4.0",
-    "@react-navigation/drawer": "^6.5.3",
+    "@react-navigation/drawer": "^6.5.4",
     "@react-navigation/material-top-tabs": "^6.3.0",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.1",
@@ -35,7 +36,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@babel/runtime": "^7.12.5",
+    "@babel/runtime": "^7.20.6",
     "@react-native-community/eslint-config": "^2.0.0",
     "@tsconfig/react-native": "^2.0.2",
     "@types/jest": "^26.0.23",

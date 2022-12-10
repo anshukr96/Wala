@@ -1,7 +1,7 @@
 import { Picker } from '@react-native-picker/picker';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import {
   CodeField,
   Cursor,
@@ -16,7 +16,7 @@ import CreaterModal from '../../Modal/Modal';
 import NetworkAddModal from '../../Modal/NetworkAddModal';
 import NoNetworkPopup from '../../Modal/NoNetworkPopup';
 import { DrawerParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
-import { NETWORK_LIST, NETWORK_TYPE } from '../../utils/constants';
+import { isIOS, NETWORK_LIST, NETWORK_TYPE } from '../../utils/constants';
 import styles from './AddNetwork.styles';
 
 const CELL_COUNT = 4;
@@ -75,7 +75,7 @@ export default function AddNetwork({ navigation }: Props) {
       <CreaterModal onModalClose={() => setIsNoNetworkAdded(false)}>
         <NetworkAddModal
           onNavigateToHome={() => navigation.goBack()}
-          onNetworkAdded={() => navigation.navigate('Feed')}
+          onNetworkAdded={() => setIsSubmitted(false)}
         />
       </CreaterModal>
     );
@@ -93,77 +93,79 @@ export default function AddNetwork({ navigation }: Props) {
   };
 
   return (
-    <View style={{ margin: 10 }}>
-      <View>
-        <Pressable onPress={() => setIsNoNetworkAdded(true)}>
-          <Icon name={'arrow-back-outline'} size={24} color={'black'} />
-        </Pressable>
-        <Text style={styles.headerText}>Add Network</Text>
-      </View>
-
+    <ScrollView>
       <View style={{ margin: 10 }}>
-        <Text style={styles.subtitle}>
-          Add following information to access network members
-        </Text>
+        <View>
+          <Pressable onPress={() => setIsNoNetworkAdded(true)}>
+            <Icon name={'arrow-back-outline'} size={24} color={'black'} />
+          </Pressable>
+          <Text style={styles.headerText}>Add Network</Text>
+        </View>
 
-        <View style={{ marginVertical: 20 }}>
-          <Text>Residential Society</Text>
-          <View style={styles.dropdownContainer}>
-            <Picker
-              selectedValue={selectedList?.value}
-              mode={'dropdown'}
-              style={styles.pickerContainer}
-              onValueChange={(itemValue, _) =>
-                setSelectedList({
-                  type: NETWORK_LIST.RESIDENTIAL,
-                  value: itemValue,
-                })
-              }>
-              {SOCIETY_LIST.map(list => (
-                <Picker.Item
-                  label={list.label}
-                  value={list.value}
-                  key={list.label}
-                />
-              ))}
-            </Picker>
+        <View style={{ margin: 10 }}>
+          <Text style={styles.subtitle}>
+            Add following information to access network members
+          </Text>
+
+          <View style={{ marginVertical: 20 }}>
+            <Text>Residential Society</Text>
+            <View style={isIOS ? {} : styles.dropdownContainer}>
+              <Picker
+                selectedValue={selectedList?.value}
+                mode={'dropdown'}
+                style={isIOS ? {} : styles.pickerContainer}
+                onValueChange={(itemValue, _) =>
+                  setSelectedList({
+                    type: NETWORK_LIST.RESIDENTIAL,
+                    value: itemValue,
+                  })
+                }>
+                {SOCIETY_LIST.map(list => (
+                  <Picker.Item
+                    label={list.label}
+                    value={list.value}
+                    key={list.label}
+                  />
+                ))}
+              </Picker>
+            </View>
+          </View>
+
+          {selectedList?.type == NETWORK_LIST.RESIDENTIAL && renderPin()}
+
+          <View style={{ marginVertical: isIOS ? 0 : 20 }}>
+            <Text>Alumni Network</Text>
+            <View style={Platform.OS == 'ios' ? {} : styles.dropdownContainer}>
+              <Picker
+                selectedValue={selectedList?.value}
+                style={Platform.OS == 'ios' ? {} : styles.pickerContainer}
+                mode={'dropdown'}
+                onValueChange={(itemValue, _) =>
+                  setSelectedList({
+                    type: NETWORK_LIST.ALUMNI,
+                    value: itemValue,
+                  })
+                }>
+                {ALUMNI_LIST.map(list => (
+                  <Picker.Item
+                    label={list.label}
+                    value={list.value}
+                    key={list.label}
+                  />
+                ))}
+              </Picker>
+            </View>
           </View>
         </View>
 
-        {selectedList?.type == NETWORK_LIST.RESIDENTIAL && renderPin()}
-
-        <View style={{ marginVertical: 20 }}>
-          <Text>Alumni Network</Text>
-          <View style={styles.dropdownContainer}>
-            <Picker
-              selectedValue={selectedList?.value}
-              style={styles.pickerContainer}
-              mode={'dropdown'}
-              onValueChange={(itemValue, _) =>
-                setSelectedList({
-                  type: NETWORK_LIST.RESIDENTIAL,
-                  value: itemValue,
-                })
-              }>
-              {ALUMNI_LIST.map(list => (
-                <Picker.Item
-                  label={list.label}
-                  value={list.value}
-                  key={list.label}
-                />
-              ))}
-            </Picker>
-          </View>
+        <View style={styles.netWarning}>
+          <Text>Can't find your network?</Text>
+          <Text>Submit a request to add a new network</Text>
         </View>
-      </View>
 
-      <View style={styles.netWarning}>
-        <Text>Can't find your network?</Text>
-        <Text>Submit a request to add a new network</Text>
+        {isSubmitted && showAfterNetworkAdded()}
+        {isNoNetworkAdded && noNetworkAdded()}
       </View>
-
-      {isSubmitted && showAfterNetworkAdded()}
-      {isNoNetworkAdded && noNetworkAdded()}
-    </View>
+    </ScrollView>
   );
 }
