@@ -3,7 +3,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { createContext } from 'react';
 import Toast from 'react-native-toast-message';
+import { requestInterceptor } from '../lib/axiosInterceptor';
 import Login from '../screens/Login/Login.screen';
+import { TOKEN } from '../utils/constants';
 import FeedDrawerMenu from './DrawerNavigation/FeedDrawerNavigation';
 import MyTabs from './TabNavigation/BottomTabNavigation';
 
@@ -60,13 +62,15 @@ const MainNavigation = () => {
       let userToken;
 
       try {
-        userToken = await AsyncStorage.getItem('userToken');
+        userToken = await AsyncStorage.getItem(TOKEN);
       } catch (e) {
         Toast.show({
           type: 'error',
           text1: 'User not found',
         });
       }
+
+      requestInterceptor();
 
       dispatch({ type: 'RESTORE_TOKEN', token: userToken });
     };
@@ -81,17 +85,13 @@ const MainNavigation = () => {
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `SecureStore`
         // In the example, we'll use a dummy token
-        console.log(data, 'sign in payload');
-        dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+        AsyncStorage.setItem(TOKEN, data.token);
+        requestInterceptor();
+        dispatch({ type: 'SIGN_IN', token: data.token });
       },
       signOut: () => dispatch({ type: 'SIGN_OUT' }),
       signUp: async (data: any) => {
-        // In a production app, we need to send user data to server and get a token
-        // We will also need to handle errors if sign up failed
-        // After getting token, we need to persist the token using `SecureStore`
-        // In the example, we'll use a dummy token
-        console.log(data, 'payload');
-        dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+        dispatch({ type: 'SIGN_IN', token: data.token });
       },
     }),
     [],

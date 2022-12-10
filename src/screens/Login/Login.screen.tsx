@@ -1,7 +1,8 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-
+import Toast from 'react-native-toast-message';
+import { sendOTP, verifyOTP } from '../../api/auth';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import PrimaryInput from '../../components/Input';
 import {
@@ -15,9 +16,39 @@ import styles from './Login.styles';
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function Login({ navigation }: Props) {
-  const [text, onChangeText] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otp, setOTP] = useState('');
   const [isOTP, setIsOTP] = useState(false);
   const { signIn } = React.useContext(AuthContext) as AuthContextInterface;
+
+  const sendPhoneOTP = async () => {
+    const isOTPSend = await sendOTP({ phoneNumber: phoneNumber });
+    if (isOTPSend) {
+      setIsOTP(true);
+      Toast.show({
+        type: 'success',
+        text1: `OTP sent to ${phoneNumber}`,
+        position: 'bottom',
+      });
+    }
+  };
+
+  const verifyPhoneOTP = async () => {
+    const body = {
+      phoneNumber: phoneNumber,
+      otp: otp,
+    };
+    const { data, error } = await verifyOTP(body);
+    if (data) {
+      signIn({ token: data.token });
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: error,
+        position: 'bottom',
+      });
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -36,32 +67,35 @@ export default function Login({ navigation }: Props) {
           )}
 
           <PrimaryInput
-            onChangeText={onChangeText}
-            placeholder={isOTP ? '10 digits...' : 'Enter 6 digit OTP'}
-            value={text}
+            onChangeText={isOTP ? setOTP : setPhoneNumber}
+            placeholder={!isOTP ? '10 digits...' : 'Enter 6 digit OTP'}
+            value={!isOTP ? phoneNumber : otp}
           />
 
           <View style={{ width: '94%', marginLeft: 12, marginVertical: 8 }}>
             <PrimaryButton
               title={isOTP ? 'VERIFY OTP' : 'SEND OTP'}
-              onPress={() => {
-                setIsOTP(true);
-                signIn({ username: 'anshu', password: 'password' });
-              }}
+              onPress={isOTP ? verifyPhoneOTP : sendPhoneOTP}
             />
           </View>
         </View>
       </View>
 
-      <View style={styles.resendOTP}>
-        <TouchableOpacity>
-          <Text style={styles.incorrectOTP}>Incorrect OTP</Text>
-        </TouchableOpacity>
+      {isOTP && (
+        <View style={styles.resendOTP}>
+          <TouchableOpacity onPress={() => setIsOTP(false)}>
+            <Text style={styles.incorrectOTP}>Change Phone Number</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity>
-          <Text style={styles.resend}>Resend</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            onPress={() => {
+              setOTP('');
+              sendPhoneOTP();
+            }}>
+            <Text style={styles.resend}>Resend</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
