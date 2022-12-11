@@ -13,6 +13,7 @@ export default StyleSheet.create({
     borderColor: '#00000030',
     textAlign: 'center',
     marginHorizontal: 10,
+    color: 'black',
   },
   focusCell: {
     borderColor: '#000',
@@ -54,6 +55,9 @@ export default StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#D3D3D3',
     marginTop: 20,
+  },
+  netWarningText: {
+    color: 'black',
   },
   subtitle: {
     fontSize: 16,

@@ -13,7 +13,7 @@ export const requestInterceptor = () => {
     async (config: AxiosRequestConfig) => {
       const accessTokenCookie = await AsyncStorage.getItem(TOKEN!);
       if (accessTokenCookie) {
-        config.headers!['Authorization'] = `Bearer ${accessTokenCookie}`;
+        config.headers!['Authorization'] = `${accessTokenCookie}`;
       }
       return config;
     },

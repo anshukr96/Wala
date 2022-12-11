@@ -22,6 +22,16 @@ export interface AuthContextInterface {
   signUp: (data: any) => Promise<void>;
 }
 
+/* to see network call on debugging */
+// if (__DEV__) {
+//   global.XMLHttpRequest = global.originalXMLHttpRequest
+//     ? global.originalXMLHttpRequest
+//     : global.XMLHttpRequest;
+//   global.FormData = global.originalFormData
+//     ? global.originalFormData
+//     : global.FormData;
+// }
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 export const AuthContext = createContext<AuthContextInterface | null>(null);
 

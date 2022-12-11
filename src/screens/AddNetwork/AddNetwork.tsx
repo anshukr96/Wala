@@ -17,7 +17,7 @@ import {
 } from 'react-native-confirmation-code-field';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { GetNetworkList } from '../../api/network';
+import { AddToNetwork, GetNetworkList } from '../../api/network';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 
 import CreaterModal from '../../Modal/Modal';
@@ -33,6 +33,7 @@ type Props = DrawerScreenProps<DrawerParamList, 'AddNetwork'>;
 interface NetworkDetail {
   type: NETWORK_TYPE;
   value: string;
+  _id: string;
 }
 
 export default function AddNetwork({ navigation }: Props) {
@@ -46,7 +47,9 @@ export default function AddNetwork({ navigation }: Props) {
     NetworkListResponse[]
   >([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedList, setSelectedList] = useState<NetworkDetail>();
+  const [selectedList, setSelectedList] = useState<NetworkDetail>(
+    {} as NetworkDetail,
+  );
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
@@ -55,7 +58,8 @@ export default function AddNetwork({ navigation }: Props) {
 
   useEffect(() => {
     populatenetwork();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const populatenetwork = async () => {
     const { data } = await GetNetworkList();
@@ -80,6 +84,50 @@ export default function AddNetwork({ navigation }: Props) {
         text1: 'unable to fetch network list',
       });
       navigation.goBack();
+    }
+  };
+
+  const showAfterNetworkAdded = () => {
+    return (
+      <CreaterModal onModalClose={() => setIsNoNetworkAdded(false)}>
+        <NetworkAddModal
+          onNavigateToHome={() => navigation.goBack()}
+          onNetworkAdded={() => setIsSubmitted(false)}
+        />
+      </CreaterModal>
+    );
+  };
+
+  const noNetworkAdded = () => {
+    return (
+      <CreaterModal onModalClose={() => setIsNoNetworkAdded(false)}>
+        <NoNetworkPopup
+          onNavigateToHome={() => navigation.goBack()}
+          onNetworkAdded={() => setIsNoNetworkAdded(false)}
+        />
+      </CreaterModal>
+    );
+  };
+
+  const addToNetwork = async () => {
+    const body = {
+      networkId: selectedList?._id || '',
+      joiningCode: value,
+    };
+
+    const { message, error } = await AddToNetwork(body);
+
+    if (!error) {
+      Toast.show({
+        type: 'success',
+        text1: message,
+      });
+      navigation.goBack();
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: message,
+      });
     }
   };
 
@@ -110,31 +158,9 @@ export default function AddNetwork({ navigation }: Props) {
           />
         </View>
         <View style={styles.submitCTA}>
-          <PrimaryButton title="Submit" onPress={() => setIsSubmitted(true)} />
+          <PrimaryButton title="Submit" onPress={addToNetwork} />
         </View>
       </>
-    );
-  };
-
-  const showAfterNetworkAdded = () => {
-    return (
-      <CreaterModal onModalClose={() => setIsNoNetworkAdded(false)}>
-        <NetworkAddModal
-          onNavigateToHome={() => navigation.goBack()}
-          onNetworkAdded={() => setIsSubmitted(false)}
-        />
-      </CreaterModal>
-    );
-  };
-
-  const noNetworkAdded = () => {
-    return (
-      <CreaterModal onModalClose={() => setIsNoNetworkAdded(false)}>
-        <NoNetworkPopup
-          onNavigateToHome={() => navigation.goBack()}
-          onNetworkAdded={() => setIsNoNetworkAdded(false)}
-        />
-      </CreaterModal>
     );
   };
 
@@ -162,15 +188,25 @@ export default function AddNetwork({ navigation }: Props) {
               <Text>Residential Society</Text>
               <View style={isIOS ? {} : styles.dropdownContainer}>
                 <Picker
-                  selectedValue={selectedList?.value}
+                  selectedValue={selectedList.value}
                   mode={'dropdown'}
                   style={isIOS ? {} : styles.pickerContainer}
-                  onValueChange={(itemValue, _) =>
+                  dropdownIconColor={'black'}
+                  onBlur={() =>
+                    resedentialSocietyList.length === 1 &&
+                    setSelectedList({
+                      type: NETWORK_LIST.RESIDENTIAL,
+                      value: resedentialSocietyList[0].name,
+                      _id: resedentialSocietyList[0]._id,
+                    })
+                  }
+                  onValueChange={(itemValue, index) => {
                     setSelectedList({
                       type: NETWORK_LIST.RESIDENTIAL,
                       value: itemValue,
-                    })
-                  }>
+                      _id: resedentialSocietyList[index]._id,
+                    });
+                  }}>
                   {resedentialSocietyList.map(list => (
                     <Picker.Item
                       label={list.name}
@@ -191,11 +227,13 @@ export default function AddNetwork({ navigation }: Props) {
                 <Picker
                   selectedValue={selectedList?.value}
                   style={Platform.OS == 'ios' ? {} : styles.pickerContainer}
+                  dropdownIconColor={'black'}
                   mode={'dropdown'}
-                  onValueChange={(itemValue, _) =>
+                  onValueChange={(itemValue, index) =>
                     setSelectedList({
                       type: NETWORK_LIST.ALUMNI,
                       value: itemValue,
+                      _id: alumniSocietyList[index]._id,
                     })
                   }>
                   {alumniSocietyList.map(list => (
@@ -211,8 +249,10 @@ export default function AddNetwork({ navigation }: Props) {
           </View>
 
           <View style={styles.netWarning}>
-            <Text>Can't find your network?</Text>
-            <Text>Submit a request to add a new network</Text>
+            <Text style={styles.netWarningText}>Can't find your network?</Text>
+            <Text style={styles.netWarningText}>
+              Submit a request to add a new network
+            </Text>
           </View>
 
           {isSubmitted && showAfterNetworkAdded()}

@@ -22,7 +22,7 @@ export default function Login({ navigation }: Props) {
   const { signIn } = React.useContext(AuthContext) as AuthContextInterface;
 
   const sendPhoneOTP = async () => {
-    const isOTPSend = await sendOTP({ phoneNumber: phoneNumber });
+    const isOTPSend = await sendOTP({ phoneNumber: `+91${phoneNumber}` });
     if (isOTPSend) {
       setIsOTP(true);
       Toast.show({
@@ -35,7 +35,7 @@ export default function Login({ navigation }: Props) {
 
   const verifyPhoneOTP = async () => {
     const body = {
-      phoneNumber: phoneNumber,
+      phoneNumber: `+91${phoneNumber}`,
       otp: otp,
     };
     const { data, error } = await verifyOTP(body);
@@ -55,7 +55,7 @@ export default function Login({ navigation }: Props) {
       <Text style={styles.header}>Wala</Text>
 
       <View style={styles.inputWrapper}>
-        <Text style={{ fontSize: 18, textAlign: 'center' }}>
+        <Text style={{ fontSize: 18, textAlign: 'center', color: 'black' }}>
           {isOTP ? 'Enter OTP' : 'LOGIN'}
         </Text>
 
@@ -68,8 +68,9 @@ export default function Login({ navigation }: Props) {
 
           <PrimaryInput
             onChangeText={isOTP ? setOTP : setPhoneNumber}
-            placeholder={!isOTP ? '10 digits...' : 'Enter 6 digit OTP'}
+            placeholder={!isOTP ? '10 digits...' : 'Enter 4 digit OTP'}
             value={!isOTP ? phoneNumber : otp}
+            maxLength={isOTP ? 4 : 10}
           />
 
           <View style={{ width: '94%', marginLeft: 12, marginVertical: 8 }}>

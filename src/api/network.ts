@@ -16,11 +16,9 @@ export const GetNetworkList = async () => {
   const request = await $axios
     .get(`${BASE_URL}/network`)
     .then(res => {
-      console.log(res, 'ponsere');
-      return { data: res.data };
+      return { data: res.data.data };
     })
     .catch(err => {
-      console.log(err);
       if (err.response) {
         return err.response.data;
       }
@@ -41,7 +39,9 @@ export const CreateNetwork = async (requestBody: CreateNetworkBody) => {
     .post(`${BASE_URL}/network`, requestBody)
     .then(res => res)
     .catch(err => {
-      if (err.response) return err.response.data;
+      if (err.response) {
+        return err.response.data;
+      }
       return err;
     });
 
@@ -59,7 +59,9 @@ export const UpdateNetwork = async (requestBody: UpdateNetworkBody) => {
     .patch(`${BASE_URL}/network`, requestBody)
     .then(res => res)
     .catch(err => {
-      if (err.response) return err.response.data;
+      if (err.response) {
+        return err.response.data;
+      }
       return err;
     });
 
@@ -77,7 +79,9 @@ export const GetNetworkDetail = async (networkID: string) => {
     .get(`${BASE_URL}/network/${networkID}`)
     .then(res => res)
     .catch(err => {
-      if (err.response) return err.response.data;
+      if (err.response) {
+        return err.response.data;
+      }
       return err;
     });
 
@@ -90,13 +94,24 @@ export const GetNetworkDetail = async (networkID: string) => {
  * @returns
  */
 
-export const AddNetwork = async (requestBody: AddNetworkBody) => {
+export const AddToNetwork = async (requestBody: AddNetworkBody) => {
   const request = await $axios
     .post(`${BASE_URL}/user/addNetwork`, requestBody)
-    .then(res => res)
-    .catch(err => {
-      if (err.response) return err.response.data;
-      return err;
+    .then(res => {
+      if (res.status == 201) {
+        return {
+          message: 'You have successfully added to the network',
+          error: null,
+        };
+      } else {
+        return {
+          message: 'Incorrect Pin',
+          error: true,
+        };
+      }
+    })
+    .catch(_ => {
+      return { message: 'Incorrect Pin', error: true };
     });
 
   return request;

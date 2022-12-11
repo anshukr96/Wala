@@ -22,4 +22,5 @@ export interface UpdateNetworkBody {
 
 export interface AddNetworkBody {
   networkId: string;
+  joiningCode: string;
 }

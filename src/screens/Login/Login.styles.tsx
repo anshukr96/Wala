@@ -28,6 +28,7 @@ export default StyleSheet.create({
   },
   text: {
     marginLeft: 12,
+    color: 'black',
   },
   resendOTP: {
     width: '80%',

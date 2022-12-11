@@ -5,12 +5,14 @@ interface PrimaryInputProps {
   value: string;
   onChangeText: Dispatch<SetStateAction<string>>;
   placeholder?: string;
+  maxLength?: number;
 }
 
 export default function PrimaryInput({
   value,
   onChangeText,
   placeholder,
+  maxLength,
 }: PrimaryInputProps) {
   return (
     <TextInput
@@ -18,6 +20,8 @@ export default function PrimaryInput({
       onChangeText={onChangeText}
       placeholder={placeholder || ''}
       value={value}
+      maxLength={maxLength}
+      placeholderTextColor="#D3D3D3"
     />
   );
 }
@@ -30,5 +34,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: '#D3D3D3',
     borderRadius: 8,
+    color: 'black',
   },
 });
