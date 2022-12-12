@@ -27,13 +27,21 @@ export default function Login({ navigation }: Props) {
       setIsOTP(true);
       Toast.show({
         type: 'success',
-        text1: `OTP sent to ${phoneNumber}`,
+        text1: `Please enter the OTP sent to ${phoneNumber}`,
         position: 'bottom',
       });
     }
   };
 
   const verifyPhoneOTP = async () => {
+    if (!otp.length) {
+      Toast.show({
+        type: 'error',
+        position: 'bottom',
+        text1: 'Please enter the OTP sent to mobile number',
+      });
+    }
+
     const body = {
       phoneNumber: `+91${phoneNumber}`,
       otp: otp,
@@ -55,7 +63,12 @@ export default function Login({ navigation }: Props) {
       <Text style={styles.header}>Wala</Text>
 
       <View style={styles.inputWrapper}>
-        <Text style={{ fontSize: 18, textAlign: 'center', color: 'black' }}>
+        <Text
+          style={{
+            fontSize: 18,
+            textAlign: 'center',
+            color: 'black',
+          }}>
           {isOTP ? 'Enter OTP' : 'LOGIN'}
         </Text>
 
