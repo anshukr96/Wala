@@ -15,6 +15,7 @@ export default StyleSheet.create({
   header: {
     fontSize: 24,
     color: 'green',
+    fontFamily: 'Lexend-Bold',
   },
   inputWrapper: {
     width: '100%',

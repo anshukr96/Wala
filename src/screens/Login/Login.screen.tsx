@@ -40,6 +40,7 @@ export default function Login({ navigation }: Props) {
         position: 'bottom',
         text1: 'Please enter the OTP sent to mobile number',
       });
+      return;
     }
 
     const body = {
@@ -68,6 +69,7 @@ export default function Login({ navigation }: Props) {
             fontSize: 18,
             textAlign: 'center',
             color: 'black',
+            fontFamily: 'Lexend-Bold',
           }}>
           {isOTP ? 'Enter OTP' : 'LOGIN'}
         </Text>
