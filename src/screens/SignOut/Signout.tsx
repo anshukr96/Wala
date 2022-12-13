@@ -1,10 +1,10 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-export default function MyProfile() {
+export default function Signout() {
   return (
     <View>
-      <Text>Profile.screen</Text>
+      <Text>Signout</Text>
     </View>
   );
 }

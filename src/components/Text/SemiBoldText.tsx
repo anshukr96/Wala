@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 interface SemiBoldTextProps {
-  children: JSX.Element;
+  children: JSX.Element | string;
   style?: Record<string, string>;
 }
 

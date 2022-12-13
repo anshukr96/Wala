@@ -2,13 +2,19 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import AddNetwork from '../../screens/AddNetwork/AddNetwork';
+import FAQ from '../../screens/FAQ/FAQ';
 import Feed from '../../screens/Feed/Feed.screen';
-import MyProfile from '../../screens/MyProfile/Profile.screen';
+import Feedback from '../../screens/Feedback/Feedback';
+import MyProfile from '../../screens/MyProfile/MyProfile.screen';
+import Signout from '../../screens/SignOut/Signout';
 
 export type DrawerParamList = {
   Feed: undefined;
   MyProfile: undefined;
   AddNetwork: undefined;
+  FAQ: undefined;
+  Feedback: undefined;
+  SignOut: undefined;
 };
 
 export type StackParamList = {
@@ -33,6 +39,9 @@ const FeedDrawerMenu = () => {
     <Drawer.Navigator screenOptions={{ headerShown: false }}>
       <Drawer.Screen name="Feed" component={FeedStackScreen} />
       <Drawer.Screen name="MyProfile" component={MyProfile} />
+      <Drawer.Screen name="FAQ" component={FAQ} />
+      <Drawer.Screen name="Feedback" component={Feedback} />
+      <Drawer.Screen name="SignOut" component={Signout} />
     </Drawer.Navigator>
   );
 };
