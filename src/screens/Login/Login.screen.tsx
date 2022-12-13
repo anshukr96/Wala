@@ -1,30 +1,72 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
+import { Text, TouchableOpacity, View } from 'react-native';
+import { sendOTP, verifyOTP } from '../../api/auth';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import PrimaryInput from '../../components/Input';
-import { RootStackParamList } from '../../navigation/navigation';
+import {
+  AuthContext,
+  AuthContextInterface,
+  RootStackParamList,
+} from '../../navigation/navigation';
+import Snackbar from '../../utils/Toast';
 
-import commonStyles from '../common.styles';
 import styles from './Login.styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function Login({ navigation }: Props) {
-  const [text, onChangeText] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otp, setOTP] = useState('');
   const [isOTP, setIsOTP] = useState(false);
+  const { signIn } = React.useContext(AuthContext) as AuthContextInterface;
+
+  const sendPhoneOTP = async () => {
+    const isOTPSend = await sendOTP({ phoneNumber: `+91${phoneNumber}` });
+    if (isOTPSend) {
+      setIsOTP(true);
+      Snackbar({
+        type: 'success',
+        message: `Please enter the OTP sent to ${phoneNumber}`,
+        position: 'bottom',
+      });
+    }
+  };
+
+  const verifyPhoneOTP = async () => {
+    if (!otp.length) {
+      Snackbar({
+        type: 'error',
+        message: 'Please enter the OTP sent to mobile number',
+        position: 'bottom',
+      });
+      return;
+    }
+
+    const body = {
+      phoneNumber: `+91${phoneNumber}`,
+      otp: otp,
+    };
+    const { data, error } = await verifyOTP(body);
+    if (data) {
+      signIn({ token: data.token });
+    } else {
+      Snackbar({ type: 'error', message: error, position: 'bottom' });
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={commonStyles.SafeAreaView1} />
-      <SafeAreaView style={commonStyles.SafeAreaView2} />
-
       <Text style={styles.header}>Wala</Text>
 
       <View style={styles.inputWrapper}>
-        <Text style={{ fontSize: 18, textAlign: 'center' }}>
+        <Text
+          style={{
+            fontSize: 18,
+            textAlign: 'center',
+            color: 'black',
+            fontFamily: 'Lexend-Bold',
+          }}>
           {isOTP ? 'Enter OTP' : 'LOGIN'}
         </Text>
 
@@ -36,29 +78,36 @@ export default function Login({ navigation }: Props) {
           )}
 
           <PrimaryInput
-            onChangeText={onChangeText}
-            placeholder={isOTP ? '10 digits...' : 'Enter 6 digit OTP'}
-            value={text}
+            onChangeText={isOTP ? setOTP : setPhoneNumber}
+            placeholder={!isOTP ? '10 digits...' : 'Enter 4 digit OTP'}
+            value={!isOTP ? phoneNumber : otp}
+            maxLength={isOTP ? 4 : 10}
           />
 
           <View style={{ width: '94%', marginLeft: 12, marginVertical: 8 }}>
             <PrimaryButton
               title={isOTP ? 'VERIFY OTP' : 'SEND OTP'}
-              onPress={() => navigation.navigate('Feed')}
+              onPress={isOTP ? verifyPhoneOTP : sendPhoneOTP}
             />
           </View>
         </View>
       </View>
 
-      <View style={styles.resendOTP}>
-        <TouchableOpacity>
-          <Text style={styles.incorrectOTP}>Incorrect OTP</Text>
-        </TouchableOpacity>
+      {isOTP && (
+        <View style={styles.resendOTP}>
+          <TouchableOpacity onPress={() => setIsOTP(false)}>
+            <Text style={styles.incorrectOTP}>Change Phone Number</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity>
-          <Text style={styles.resend}>Resend</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            onPress={() => {
+              setOTP('');
+              sendPhoneOTP();
+            }}>
+            <Text style={styles.resend}>Resend</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }

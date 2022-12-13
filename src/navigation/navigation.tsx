@@ -1,69 +1,133 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Feed from '../screens/Feed/Feed.screen';
-import Home from '../screens/Home/Home.screen';
+import React, { createContext } from 'react';
+import { requestInterceptor } from '../lib/axiosInterceptor';
 import Login from '../screens/Login/Login.screen';
-import Profile from '../screens/Profile/Profile.screen';
+import { TOKEN } from '../utils/constants';
+import Snackbar from '../utils/Toast';
+import FeedDrawerMenu from './DrawerNavigation/FeedDrawerNavigation';
+import MyTabs from './TabNavigation/BottomTabNavigation';
 
 export type RootStackParamList = {
   Login: undefined;
   Feed: undefined;
-  HomeBase: undefined;
+  BottomTabs: undefined;
+  Menu: undefined;
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
-const Tab = createBottomTabNavigator();
-
-function MyTabs() {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen
-        name="Home"
-        component={Home}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color }: any) => {
-            return <Icon name={'ios-home'} size={25} color={color} />;
-          },
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color }: any) => {
-            return <Icon name={'ios-settings'} size={25} color={color} />;
-          },
-        }}
-      />
-    </Tab.Navigator>
-  );
+export interface AuthContextInterface {
+  signIn: (data: any) => Promise<void>;
+  signOut: () => void;
+  signUp: (data: any) => Promise<void>;
 }
 
+/* to see network call on debugging */
+// if (__DEV__) {
+//   global.XMLHttpRequest = global.originalXMLHttpRequest
+//     ? global.originalXMLHttpRequest
+//     : global.XMLHttpRequest;
+//   global.FormData = global.originalFormData
+//     ? global.originalFormData
+//     : global.FormData;
+// }
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+export const AuthContext = createContext<AuthContextInterface | null>(null);
+
 const MainNavigation = () => {
+  const [state, dispatch] = React.useReducer(
+    (prevState: any, action: any) => {
+      switch (action.type) {
+        case 'RESTORE_TOKEN':
+          return {
+            ...prevState,
+            userToken: action.token,
+            isLoading: false,
+          };
+        case 'SIGN_IN':
+          return {
+            ...prevState,
+            isSignout: false,
+            userToken: action.token,
+          };
+        case 'SIGN_OUT':
+          return {
+            ...prevState,
+            isSignout: true,
+            userToken: null,
+          };
+      }
+    },
+    {
+      isLoading: true,
+      isSignout: false,
+      userToken: null,
+    },
+  );
+
+  React.useEffect(() => {
+    // Fetch the token from storage then navigate to our appropriate place
+    const bootstrapAsync = async () => {
+      let userToken;
+
+      try {
+        userToken = await AsyncStorage.getItem(TOKEN);
+      } catch (e) {
+        Snackbar({
+          type: 'error',
+          message: 'User not found',
+          position: 'bottom',
+        });
+      }
+
+      requestInterceptor();
+
+      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+    };
+
+    bootstrapAsync();
+  }, []);
+
+  const authContext = React.useMemo(
+    () => ({
+      signIn: async (data: any) => {
+        // In a production app, we need to send some data (usually username, password) to server and get a token
+        // We will also need to handle errors if sign in failed
+        // After getting token, we need to persist the token using `SecureStore`
+        // In the example, we'll use a dummy token
+        AsyncStorage.setItem(TOKEN, data.token);
+        requestInterceptor();
+        dispatch({ type: 'SIGN_IN', token: data.token });
+      },
+      signOut: () => dispatch({ type: 'SIGN_OUT' }),
+      signUp: async (data: any) => {
+        dispatch({ type: 'SIGN_IN', token: data.token });
+      },
+    }),
+    [],
+  );
+
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name="Login"
-          options={{ headerShown: false }}
-          component={Login}
-        />
-        <Stack.Screen
-          name="Feed"
-          options={{ headerShown: false }}
-          component={Feed}
-        />
-        <Stack.Screen
-          name="HomeBase"
-          options={{ headerShown: false }}
-          component={MyTabs}
-        />
-      </Stack.Navigator>
+      <AuthContext.Provider value={authContext}>
+        {state.userToken ? (
+          FeedDrawerMenu()
+        ) : (
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen
+              name="Login"
+              options={{ headerShown: false }}
+              component={Login}
+            />
+            <Stack.Screen
+              name="BottomTabs"
+              options={{ headerShown: false }}
+              component={MyTabs}
+            />
+          </Stack.Navigator>
+        )}
+      </AuthContext.Provider>
     </NavigationContainer>
   );
 };

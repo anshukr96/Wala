@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>reactNativeTypescriptBoilerplate</string>
+	<string>Wala</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -53,22 +53,31 @@
 	<false/>
 	<key>UIAppFonts</key>
 	<array>
-	<string>AntDesign.ttf</string>
-	<string>Entypo.ttf</string>
-	<string>EvilIcons.ttf</string>
-	<string>Feather.ttf</string>
-	<string>FontAwesome.ttf</string>
-	<string>FontAwesome5_Brands.ttf</string>
-	<string>FontAwesome5_Regular.ttf</string>
-	<string>FontAwesome5_Solid.ttf</string>
-	<string>Foundation.ttf</string>
-	<string>Ionicons.ttf</string>
-	<string>MaterialIcons.ttf</string>
-	<string>MaterialCommunityIcons.ttf</string>
-	<string>SimpleLineIcons.ttf</string>
-	<string>Octicons.ttf</string>
-	<string>Zocial.ttf</string>
-	<string>Fontisto.ttf</string>
+		<string>AntDesign.ttf</string>
+		<string>Entypo.ttf</string>
+		<string>EvilIcons.ttf</string>
+		<string>Feather.ttf</string>
+		<string>FontAwesome.ttf</string>
+		<string>FontAwesome5_Brands.ttf</string>
+		<string>FontAwesome5_Regular.ttf</string>
+		<string>FontAwesome5_Solid.ttf</string>
+		<string>Foundation.ttf</string>
+		<string>Ionicons.ttf</string>
+		<string>MaterialIcons.ttf</string>
+		<string>MaterialCommunityIcons.ttf</string>
+		<string>SimpleLineIcons.ttf</string>
+		<string>Octicons.ttf</string>
+		<string>Zocial.ttf</string>
+		<string>Fontisto.ttf</string>
+		<string>Lexend-Black.ttf</string>
+		<string>Lexend-Bold.ttf</string>
+		<string>Lexend-ExtraBold.ttf</string>
+		<string>Lexend-ExtraLight.ttf</string>
+		<string>Lexend-Light.ttf</string>
+		<string>Lexend-Medium.ttf</string>
+		<string>Lexend-Regular.ttf</string>
+		<string>Lexend-SemiBold.ttf</string>
+		<string>Lexend-Thin.ttf</string>
 	</array>
 </dict>
 </plist>
