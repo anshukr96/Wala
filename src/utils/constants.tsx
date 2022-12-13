@@ -11,3 +11,12 @@ export const isIOS = Platform.OS == 'ios';
 
 export const BASE_URL = 'http://35.154.18.227/api/v1';
 export const TOKEN = 'token';
+export const TOAST = {
+  ERROR: 'error',
+  SUCCESS: 'success',
+  WARNING: 'warning',
+};
+export const TOAST_POSITION = {
+  BOTTOM: 'bottom',
+  TOP: 'top',
+};

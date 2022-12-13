@@ -2,10 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { createContext } from 'react';
-import Toast from 'react-native-toast-message';
 import { requestInterceptor } from '../lib/axiosInterceptor';
 import Login from '../screens/Login/Login.screen';
 import { TOKEN } from '../utils/constants';
+import Snackbar from '../utils/Toast';
 import FeedDrawerMenu from './DrawerNavigation/FeedDrawerNavigation';
 import MyTabs from './TabNavigation/BottomTabNavigation';
 
@@ -74,9 +74,10 @@ const MainNavigation = () => {
       try {
         userToken = await AsyncStorage.getItem(TOKEN);
       } catch (e) {
-        Toast.show({
+        Snackbar({
           type: 'error',
-          text1: 'User not found',
+          message: 'User not found',
+          position: 'bottom',
         });
       }
 

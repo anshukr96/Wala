@@ -1,7 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-toast-message';
 import { sendOTP, verifyOTP } from '../../api/auth';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import PrimaryInput from '../../components/Input';
@@ -10,6 +9,7 @@ import {
   AuthContextInterface,
   RootStackParamList,
 } from '../../navigation/navigation';
+import Snackbar from '../../utils/Toast';
 
 import styles from './Login.styles';
 
@@ -25,9 +25,9 @@ export default function Login({ navigation }: Props) {
     const isOTPSend = await sendOTP({ phoneNumber: `+91${phoneNumber}` });
     if (isOTPSend) {
       setIsOTP(true);
-      Toast.show({
+      Snackbar({
         type: 'success',
-        text1: `Please enter the OTP sent to ${phoneNumber}`,
+        message: `Please enter the OTP sent to ${phoneNumber}`,
         position: 'bottom',
       });
     }
@@ -35,10 +35,10 @@ export default function Login({ navigation }: Props) {
 
   const verifyPhoneOTP = async () => {
     if (!otp.length) {
-      Toast.show({
+      Snackbar({
         type: 'error',
+        message: 'Please enter the OTP sent to mobile number',
         position: 'bottom',
-        text1: 'Please enter the OTP sent to mobile number',
       });
       return;
     }
@@ -51,11 +51,7 @@ export default function Login({ navigation }: Props) {
     if (data) {
       signIn({ token: data.token });
     } else {
-      Toast.show({
-        type: 'error',
-        text1: error,
-        position: 'bottom',
-      });
+      Snackbar({ type: 'error', message: error, position: 'bottom' });
     }
   };
 

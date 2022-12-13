@@ -15,7 +15,6 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { AddToNetwork, GetNetworkList } from '../../api/network';
 import PrimaryButton from '../../components/Button/PrimaryButton';
@@ -26,6 +25,7 @@ import NoNetworkPopup from '../../Modal/NoNetworkPopup';
 import { DrawerParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
 import { NetworkListResponse } from '../../types/network/network';
 import { isIOS, NETWORK_LIST, NETWORK_TYPE } from '../../utils/constants';
+import Snackbar from '../../utils/Toast';
 import styles from './AddNetwork.styles';
 
 const CELL_COUNT = 4;
@@ -79,9 +79,10 @@ export default function AddNetwork({ navigation }: Props) {
       setAlumniSocietyList(societyList);
       setLoading(false);
     } else {
-      Toast.show({
+      Snackbar({
         type: 'error',
-        text1: 'unable to fetch network list',
+        message: 'unable to fetch network list',
+        position: 'bottom',
       });
       navigation.goBack();
     }
@@ -118,15 +119,17 @@ export default function AddNetwork({ navigation }: Props) {
     const { message, error } = await AddToNetwork(body);
 
     if (!error) {
-      Toast.show({
+      Snackbar({
         type: 'success',
-        text1: message,
+        message: message,
+        position: 'bottom',
       });
       navigation.goBack();
     } else {
-      Toast.show({
+      Snackbar({
         type: 'error',
-        text1: message,
+        message: message,
+        position: 'bottom',
       });
     }
   };
