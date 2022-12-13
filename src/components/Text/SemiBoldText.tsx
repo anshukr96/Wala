@@ -3,12 +3,20 @@ import { StyleSheet, Text, View } from 'react-native';
 
 interface SemiBoldTextProps {
   children: JSX.Element;
+  style?: Record<string, string>;
 }
 
-export default function SemiBoldText({ children }: SemiBoldTextProps) {
+export default function SemiBoldText({ children, style }: SemiBoldTextProps) {
   return (
     <View>
-      <Text style={TextStyles.container}>{children}</Text>;
+      <Text
+        style={
+          style
+            ? { ...TextStyles.container, ...style }
+            : { ...TextStyles.container }
+        }>
+        {children}
+      </Text>
     </View>
   );
 }
