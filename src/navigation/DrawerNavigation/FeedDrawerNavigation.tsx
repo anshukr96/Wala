@@ -9,7 +9,7 @@ import MyProfile from '../../screens/MyProfile/MyProfile.screen';
 import Signout from '../../screens/SignOut/Signout';
 
 export type DrawerParamList = {
-  Feed: undefined;
+  ['My Listing']: undefined;
   MyProfile: undefined;
   AddNetwork: undefined;
   FAQ: undefined;
@@ -36,8 +36,14 @@ const FeedStackScreen = () => {
 
 const FeedDrawerMenu = () => {
   return (
-    <Drawer.Navigator screenOptions={{ headerShown: false }}>
-      <Drawer.Screen name="Feed" component={FeedStackScreen} />
+    <Drawer.Navigator
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          backgroundColor: '#c6cbef',
+        },
+      }}>
+      <Drawer.Screen name="My Listing" component={FeedStackScreen} />
       <Drawer.Screen name="MyProfile" component={MyProfile} />
       <Drawer.Screen name="FAQ" component={FAQ} />
       <Drawer.Screen name="Feedback" component={Feedback} />

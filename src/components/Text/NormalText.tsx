@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 interface NormalTextProps {
   children: JSX.Element | string;
-  style?: Record<string, string>;
+  style?: Record<string, string | number>;
 }
 
 export default function NormalText({ children, style }: NormalTextProps) {
