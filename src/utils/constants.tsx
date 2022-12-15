@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import Config from 'react-native-config';
 
 export enum NETWORK_LIST {
   ALUMNI = 'ALUMINI',
@@ -9,7 +10,7 @@ export type NETWORK_TYPE = NETWORK_LIST.ALUMNI | NETWORK_LIST.RESIDENTIAL;
 
 export const isIOS = Platform.OS == 'ios';
 
-export const BASE_URL = 'http://35.154.18.227/api/v1';
+export const BASE_URL = Config.API_URL;
 export const TOKEN = 'token';
 export const TOAST = {
   ERROR: 'error',
