@@ -39,8 +39,9 @@ const FeedDrawerMenu = () => {
     <Drawer.Navigator
       screenOptions={{
         headerShown: false,
+        drawerActiveTintColor: 'white',
         drawerStyle: {
-          backgroundColor: '#c6cbef',
+          backgroundColor: '#90EE90',
         },
       }}>
       <Drawer.Screen name="My Listing" component={FeedStackScreen} />

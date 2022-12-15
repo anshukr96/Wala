@@ -21,3 +21,25 @@ export const TOAST_POSITION = {
   BOTTOM: 'bottom',
   TOP: 'top',
 };
+export const OPTIONS = [
+  {
+    id: 1,
+    name: 'Request creation of  a new network',
+    selected: false,
+  },
+  {
+    id: 2,
+    name: 'Request access to existing network',
+    selected: false,
+  },
+  {
+    id: 3,
+    name: 'Feedback/Suggestions',
+    selected: false,
+  },
+  {
+    id: 4,
+    name: 'Other',
+    selected: false,
+  },
+];

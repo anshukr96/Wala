@@ -111,7 +111,7 @@ const MainNavigation = () => {
   return (
     <NavigationContainer>
       <AuthContext.Provider value={authContext}>
-        {state.userToken ? (
+        {!state.userToken ? (
           FeedDrawerMenu()
         ) : (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
