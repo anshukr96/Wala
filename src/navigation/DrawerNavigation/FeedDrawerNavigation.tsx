@@ -3,8 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import AddNetwork from '../../screens/AddNetwork/AddNetwork';
 import FAQ from '../../screens/FAQ/FAQ';
-import Feed from '../../screens/Feed/Feed.screen';
 import Feedback from '../../screens/Feedback/Feedback';
+import CreateListings from '../../screens/Listings/CreateListings/CreateListings';
 import MyProfile from '../../screens/MyProfile/MyProfile.screen';
 import Signout from '../../screens/SignOut/Signout';
 
@@ -28,7 +28,7 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const FeedStackScreen = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Listing" component={Feed} />
+      <Stack.Screen name="Listing" component={CreateListings} />
       <Stack.Screen name="AddNetwork" component={AddNetwork} />
     </Stack.Navigator>
   );
