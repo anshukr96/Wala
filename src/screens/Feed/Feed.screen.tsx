@@ -1,13 +1,6 @@
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useState } from 'react';
-import {
-  Alert,
-  Pressable,
-  SafeAreaView,
-  StatusBar,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, SafeAreaView, StatusBar, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import SecondaryButton from '../../components/Button/SecondaryButton';
@@ -19,6 +12,7 @@ type Props = DrawerScreenProps<StackParamList, 'Listing'>;
 
 interface FeedHeaderProps {
   onMenuToggle: () => void;
+  onPress: () => void;
 }
 
 const Feed = ({ navigation }: Props) => {
@@ -50,24 +44,24 @@ const Feed = ({ navigation }: Props) => {
       <StatusBar barStyle="dark-content" backgroundColor={'#f9f9f9'} />
       <SafeAreaView style={commonStyles.SafeAreaView1} />
       <SafeAreaView style={commonStyles.SafeAreaView2}>
-        <FeedHeader onMenuToggle={() => navigation.toggleDrawer()} />
+        <FeedHeader
+          onMenuToggle={() => navigation.toggleDrawer()}
+          onPress={() => navigation.navigate('CreateListing')}
+        />
         {feedList.length ? <></> : renderNoNetwork()}
       </SafeAreaView>
     </>
   );
 };
 
-export const FeedHeader = ({ onMenuToggle }: FeedHeaderProps) => {
+export const FeedHeader = ({ onMenuToggle, onPress }: FeedHeaderProps) => {
   return (
     <View style={FeedStyles.outerWrapper}>
       <Pressable onPress={onMenuToggle}>
         <Icon name={'ios-menu'} size={24} color={'black'} />
       </Pressable>
       <View style={FeedStyles.ctaWrapper}>
-        <SecondaryButton
-          title="New listing"
-          onPress={() => Alert.alert('great job')}
-        />
+        <SecondaryButton title="New listing" onPress={onPress} />
 
         <View style={FeedStyles.searchWrapper}>
           <Icon name={'ios-search'} size={24} color={'black'} />

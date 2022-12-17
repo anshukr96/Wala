@@ -43,3 +43,21 @@ export const OPTIONS = [
     selected: false,
   },
 ];
+
+export const MENU_OPTIONS = [
+  {
+    id: 1,
+    name: 'Sold',
+    selected: false,
+  },
+  {
+    id: 2,
+    name: 'Don’t want to sell',
+    selected: false,
+  },
+  {
+    id: 3,
+    name: 'Others',
+    selected: false,
+  },
+];

@@ -8,7 +8,7 @@ import SemiBoldText from '../../components/Text/SemiBoldText';
 import { OPTIONS } from '../../utils/constants';
 import FeedbackStyles from './Feedback.styles';
 
-interface OptionProps {
+export interface OptionProps {
   id: number;
   name: JSX.Element | string;
   selected: boolean;

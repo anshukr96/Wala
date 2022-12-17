@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import AddNetwork from '../../screens/AddNetwork/AddNetwork';
 import FAQ from '../../screens/FAQ/FAQ';
+import Feed from '../../screens/Feed/Feed.screen';
 import Feedback from '../../screens/Feedback/Feedback';
 import CreateListings from '../../screens/Listings/CreateListings/CreateListings';
 import MyProfile from '../../screens/MyProfile/MyProfile.screen';
@@ -20,6 +21,7 @@ export type DrawerParamList = {
 export type StackParamList = {
   Listing: undefined;
   AddNetwork: undefined;
+  CreateListing: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -28,8 +30,9 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const FeedStackScreen = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Listing" component={CreateListings} />
+      <Stack.Screen name="Listing" component={Feed} />
       <Stack.Screen name="AddNetwork" component={AddNetwork} />
+      <Stack.Screen name="CreateListing" component={CreateListings} />
     </Stack.Navigator>
   );
 };
