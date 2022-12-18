@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 interface PrimaryButtonProps {
   title: string;
   onPress: () => void;
-  style?: Record<string, string>;
+  style?: Record<string, any>;
 }
 
 export default function SecondaryButton({

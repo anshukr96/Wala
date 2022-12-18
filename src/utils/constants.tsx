@@ -61,3 +61,15 @@ export const MENU_OPTIONS = [
     selected: false,
   },
 ];
+
+export const NETWORK_LISTING = [
+  { id: 1, name: 'Godrej Woodsman Estate', selected: false },
+  { id: 2, name: 'DLF Corporate Park', selected: false },
+  { id: 3, name: 'ISB Alumni', selected: false },
+];
+
+export interface OptionProps {
+  id: number;
+  name: JSX.Element | string;
+  selected: boolean;
+}

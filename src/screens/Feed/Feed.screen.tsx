@@ -46,7 +46,7 @@ const Feed = ({ navigation }: Props) => {
       <SafeAreaView style={commonStyles.SafeAreaView2}>
         <FeedHeader
           onMenuToggle={() => navigation.toggleDrawer()}
-          onPress={() => navigation.navigate('CreateListing')}
+          onPress={() => navigation.navigate('ExistingListing')}
         />
         {feedList.length ? <></> : renderNoNetwork()}
       </SafeAreaView>

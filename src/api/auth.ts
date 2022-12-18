@@ -13,7 +13,6 @@ export const sendOTP = async (body: SendOTPBody): Promise<boolean> => {
     .post(`${BASE_URL}/user/sendOtp`, body)
     .then(res => {
       if (res.status == 200) {
-        console.log(res.data);
         return true;
       } else {
         return false;

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Image, Pressable, View } from 'react-native';
+import { Image, Linking, Pressable, View } from 'react-native';
+import Share from 'react-native-share';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { OptionProps } from '../../screens/Feedback/Feedback';
-import { MENU_OPTIONS } from '../../utils/constants';
+import { MENU_OPTIONS, OptionProps } from '../../utils/constants';
 import SecondaryButton from '../Button/SecondaryButton';
 import RadioButton from '../Radio/Radio';
 import BoldText from '../Text/BoldText';
@@ -20,6 +20,28 @@ export default function Card() {
         : { ...isSelectedItem, selected: false },
     );
     setOptions(updatedState);
+  };
+
+  const shareOnMail = () => {
+    Linking.openURL(
+      'mailto:support@example.com?subject=SendMail&body=Description',
+    );
+  };
+
+  const shareOnWhatsapp = () => {
+    const shareOptions = {
+      title: 'Share via',
+      message: 'some message',
+      social: Share.Social.WHATSAPP,
+    };
+
+    Share.shareSingle(shareOptions)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        err && console.log(err);
+      });
   };
 
   const renderDropdown = () => {
@@ -94,8 +116,12 @@ export default function Card() {
 
         <View style={CardStyles.share}>
           <NormalText style={CardStyles.text}>Share on:</NormalText>
-          <Icon name="logo-whatsapp" size={32} color="green" />
-          <Icon name="mail" size={32} style={{ marginLeft: 8 }} />
+          <Pressable onPress={shareOnWhatsapp}>
+            <Icon name="logo-whatsapp" size={32} color="green" />
+          </Pressable>
+          <Pressable onPress={shareOnMail}>
+            <Icon name="mail" size={32} style={{ marginLeft: 8 }} />
+          </Pressable>
         </View>
       </View>
     </View>

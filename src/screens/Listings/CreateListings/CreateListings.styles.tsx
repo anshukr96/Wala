@@ -2,15 +2,39 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: {
-    margin: 32,
+    padding: 16,
+    backgroundColor: '#fff',
+    height: '100%',
   },
-  newlist: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  upload: {
     alignSelf: 'center',
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: '#dadce0',
-    width: '80%',
+  },
+  header: {
+    marginVertical: 16,
+  },
+  price: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  chooseNetwork: {
+    margin: 16,
+  },
+  chooseHeader: {
+    marginVertical: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  cta: {
+    marginVertical: 16,
+    width: '70%',
+    alignSelf: 'center',
+  },
+  saveCTA: {
+    marginVertical: 16,
+  },
+  list: {
+    maxHeight: 100,
   },
 });

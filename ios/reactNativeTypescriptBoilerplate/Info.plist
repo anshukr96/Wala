@@ -85,5 +85,10 @@
 		<string>Lexend-SemiBold.ttf</string>
 		<string>Lexend-Thin.ttf</string>
 	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>whatsapp</string>
+	<string>mailto</string>
+	</array>
 </dict>
 </plist>

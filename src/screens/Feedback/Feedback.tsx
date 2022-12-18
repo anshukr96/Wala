@@ -5,14 +5,8 @@ import PrimaryButton from '../../components/Button/PrimaryButton';
 import RadioButton from '../../components/Radio/Radio';
 import BoldText from '../../components/Text/BoldText';
 import SemiBoldText from '../../components/Text/SemiBoldText';
-import { OPTIONS } from '../../utils/constants';
+import { OptionProps, OPTIONS } from '../../utils/constants';
 import FeedbackStyles from './Feedback.styles';
-
-export interface OptionProps {
-  id: number;
-  name: JSX.Element | string;
-  selected: boolean;
-}
 
 export default function Feedback({ navigation }: any) {
   const [options, setOptions] = useState<OptionProps[]>(OPTIONS);
