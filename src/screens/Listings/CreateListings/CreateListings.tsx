@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { PublishPost } from '../../../api/feeds';
 import PrimaryButton from '../../../components/Button/PrimaryButton';
 import SecondaryButton from '../../../components/Button/SecondaryButton';
 import PrimaryInput from '../../../components/Input';
 import RadioButton from '../../../components/Radio/Radio';
 import NormalText from '../../../components/Text/NormalText';
 import { NETWORK_LISTING, OptionProps } from '../../../utils/constants';
+import Snackbar from '../../../utils/Toast';
 import {
   default as CreateListingsStyles,
   default as CreateListingStyle,
@@ -46,6 +48,19 @@ export default function CreateListings({ navigation }: any) {
         : { ...isSelectedItem, selected: false },
     );
     setNetworkList(updatedState);
+  };
+
+  const publishNewPost = () => {
+    const data = PublishPost('');
+    if (data) {
+      console.log(data);
+    } else {
+      Snackbar({
+        type: 'error',
+        message: 'unable to fetch network list',
+        position: 'bottom',
+      });
+    }
   };
 
   const renderNetworkPublish = () => {
@@ -94,7 +109,7 @@ export default function CreateListings({ navigation }: any) {
 
           <SecondaryButton
             title="SAVE WITHOUT PUBLISHING"
-            onPress={() => console.log('publish')}
+            onPress={publishNewPost}
             style={CreateListingStyle.saveCTA}
           />
         </View>

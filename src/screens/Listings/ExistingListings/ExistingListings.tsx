@@ -1,12 +1,33 @@
-import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect } from 'react';
 import { Image, Pressable, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { GetExistingPosts } from '../../../api/feeds';
 import Card from '../../../components/Card/Card';
 import NormalText from '../../../components/Text/NormalText';
 import SemiBoldText from '../../../components/Text/SemiBoldText';
+import { TOKEN } from '../../../utils/constants';
+import Snackbar from '../../../utils/Toast';
 import ExisitngListingsStyles from './ExistingListings.styles';
 
 export default function ExistingListings({ navigation }: any) {
+  useEffect(() => {
+    fetchExistingsPost();
+  }, []);
+
+  const fetchExistingsPost = async () => {
+    const user = await AsyncStorage.getItem(TOKEN);
+    const { data, err } = await GetExistingPosts('');
+    if (data) {
+      console.log(data);
+    } else {
+      Snackbar({
+        type: 'error',
+        message: err,
+      });
+    }
+  };
+
   const ListingsHeader = () => {
     return (
       <View>

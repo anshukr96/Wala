@@ -1,16 +1,41 @@
 import React, { useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { SaveFeedback } from '../../api/user';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import RadioButton from '../../components/Radio/Radio';
 import BoldText from '../../components/Text/BoldText';
 import SemiBoldText from '../../components/Text/SemiBoldText';
 import { OptionProps, OPTIONS } from '../../utils/constants';
+import Snackbar from '../../utils/Toast';
 import FeedbackStyles from './Feedback.styles';
 
 export default function Feedback({ navigation }: any) {
   const [options, setOptions] = useState<OptionProps[]>(OPTIONS);
+  const [selectedOption, setSelectedOption] = useState('');
   const [feedback, setFeedback] = useState('');
+
+  const sendFeedback = async () => {
+    const requestBody = {
+      text: feedback,
+      type: selectedOption,
+    };
+    const { data, error } = await SaveFeedback(requestBody);
+    if (data) {
+      Snackbar({
+        type: 'success',
+        message: 'We hear you!! Thank you for sending feedback',
+        position: 'bottom',
+      });
+    } else {
+      Snackbar({
+        type: 'error',
+        message: error,
+        position: 'bottom',
+      });
+    }
+  };
+
   const onRadioBtnClick = (item: OptionProps) => {
     let updatedState = options.map(isSelectedItem =>
       isSelectedItem.id === item.id
@@ -18,6 +43,7 @@ export default function Feedback({ navigation }: any) {
         : { ...isSelectedItem, selected: false },
     );
     setOptions(updatedState);
+    setSelectedOption(item.name.toString());
   };
 
   const FeedbackHeader = () => {
@@ -67,7 +93,7 @@ export default function Feedback({ navigation }: any) {
         />
 
         <View style={FeedbackStyles.cta}>
-          <PrimaryButton title="SUBMIT" onPress={() => console.log('sumbit')} />
+          <PrimaryButton title="SUBMIT" onPress={sendFeedback} />
         </View>
       </View>
     </View>

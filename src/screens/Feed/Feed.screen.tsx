@@ -1,10 +1,12 @@
 import { DrawerScreenProps } from '@react-navigation/drawer';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, StatusBar, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { GetPostsList } from '../../api/feeds';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import SecondaryButton from '../../components/Button/SecondaryButton';
 import { StackParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
+import Snackbar from '../../utils/Toast';
 import commonStyles from '../common.styles';
 import FeedStyles from './Feed.style';
 
@@ -17,6 +19,23 @@ interface FeedHeaderProps {
 
 const Feed = ({ navigation }: Props) => {
   const [feedList, setFeedList] = useState([]);
+
+  useEffect(() => {
+    fetchPostList();
+  }, []);
+
+  const fetchPostList = async () => {
+    const { data } = await GetPostsList();
+    if (data) {
+      setFeedList(data);
+    } else {
+      Snackbar({
+        type: 'error',
+        message: 'unable to fetch network list',
+        position: 'bottom',
+      });
+    }
+  };
 
   const renderNoNetwork = () => {
     return (
