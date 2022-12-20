@@ -12,6 +12,7 @@ export const GetPostsList = async () => {
     .get(`${BASE_URL}/post`)
     .then(res => {
       if (res.status === 200) {
+        console.log(res.data);
         return { data: res.data.data, err: null };
       }
       return { data: null, err: res.data.error };
@@ -70,10 +71,11 @@ export const PublishPost = async (id: string) => {
 /**
  * Delete post
  * @param id
+ * @param  body
  * @returns
  */
 
-export const DeletePost = async (id: string) => {
+export const DeletePost = async (id: string, body: any) => {
   const request = await $axios
     .delete(`${BASE_URL}/post/${id}`)
     .then(res => {
@@ -97,14 +99,14 @@ export const DeletePost = async (id: string) => {
 
 export const GetExistingPosts = async (userID: string) => {
   const request = await $axios
-    .delete(`${BASE_URL}/post/?user=${userID}`)
+    .get(`${BASE_URL}/post?user=${userID}`)
     .then(res => {
       if (res.status === 200) {
         return { data: res.data.data, err: 'Unable to fetch list' };
       }
       return { data: null, err: 'Unable to fetch list' };
     })
-    .catch(() => {
+    .catch(_ => {
       return { data: null, err: 'Unable to fetch list' };
     });
 

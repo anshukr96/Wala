@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Image, Linking, Pressable, View } from 'react-native';
 import Share from 'react-native-share';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { DeletePost } from '../../api/feeds';
 import { MENU_OPTIONS, OptionProps } from '../../utils/constants';
+import Snackbar from '../../utils/Toast';
 import SecondaryButton from '../Button/SecondaryButton';
 import RadioButton from '../Radio/Radio';
 import BoldText from '../Text/BoldText';
@@ -44,14 +46,33 @@ export default function Card() {
       });
   };
 
+  const deleteListing = async () => {
+    const userID = '';
+    const body = {
+      reason: '',
+    };
+    const { data } = await DeletePost(userID, body);
+    if (data) {
+      Snackbar({
+        type: 'success',
+        message: 'Post is removed successfully',
+      });
+    } else {
+      Snackbar({
+        type: 'error',
+        message: 'Unable to remove post',
+      });
+    }
+  };
+
   const renderDropdown = () => {
     return (
       <View style={CardStyles.dropdownContainer}>
         <BoldText>REMOVE LISTING?</BoldText>
 
         <View style={{ marginVertical: 16 }}>
-          {options.map(item => (
-            <View key={item.id}>
+          {options.map((item, index) => (
+            <View key={index}>
               <RadioButton
                 onPress={() => onRadioBtnClick(item)}
                 selected={item.selected}
@@ -63,7 +84,12 @@ export default function Card() {
         </View>
 
         <View style={CardStyles.dropdownCTA}>
-          <SecondaryButton title="OK" onPress={() => setIsMenuOpened(false)} />
+          <Pressable onPress={deleteListing}>
+            <SecondaryButton
+              title="OK"
+              onPress={() => setIsMenuOpened(false)}
+            />
+          </Pressable>
 
           <Pressable onPress={() => setIsMenuOpened(false)}>
             <BoldText style={{ color: 'red' }}>CANCEL</BoldText>

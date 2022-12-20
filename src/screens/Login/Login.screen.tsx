@@ -30,6 +30,12 @@ export default function Login({ navigation }: Props) {
         message: `Please enter the OTP sent to ${phoneNumber}`,
         position: 'bottom',
       });
+    } else {
+      Snackbar({
+        type: 'error',
+        message: 'Invalid Phone number',
+        position: 'bottom',
+      });
     }
   };
 

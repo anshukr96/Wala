@@ -11,6 +11,7 @@ export type NETWORK_TYPE = NETWORK_LIST.ALUMNI | NETWORK_LIST.RESIDENTIAL;
 export const isIOS = Platform.OS == 'ios';
 
 export const BASE_URL = Config.API_URL;
+export const USERID = 'userID';
 export const TOKEN = 'token';
 export const TOAST = {
   ERROR: 'error',

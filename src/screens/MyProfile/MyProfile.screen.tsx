@@ -1,37 +1,49 @@
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import { CameraOptions, launchCamera } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { GetUserDetails } from '../../api/user';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import BoldText from '../../components/Text/BoldText';
 import NormalText from '../../components/Text/NormalText';
 import SemiBoldText from '../../components/Text/SemiBoldText';
 import DeleteNetworkModal from '../../Modal/DeleteNetworkModal';
 import CreaterModal from '../../Modal/Modal';
+import { UserInfoBody } from '../../types/users/user';
+import { NETWORK_LIST, USERID } from '../../utils/constants';
+import Snackbar from '../../utils/Toast';
 import ProfileStyles from './MyProfile.styles';
 
-const camerOptions: CameraOptions = {
-  mediaType: 'photo',
-  maxWidth: 250,
-  maxHeight: 250,
-  quality: 0.7,
-  includeBase64: true,
-};
-
 export default function MyProfile({ navigation }: any) {
-  const [networkList, setNetworkList] = useState([
-    { name: 'Godrej Woodsman Estate', verificationMethod: 'PIN: 1234' },
-    { name: 'Indian School of Business', verificationMethod: 'Email' },
-  ]);
+  const [profileInfo, setProfileInfo] = useState<UserInfoBody>({
+    username: '',
+    phoneNumber: '',
+    profileImage: '',
+    networks: [],
+  });
   const [isDeletePopup, setIsDeletePopup] = useState(false);
+
+  useEffect(() => {
+    getUserInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getUserInfo = async () => {
+    const userID = await AsyncStorage.getItem(USERID);
+    const { data } = await GetUserDetails(userID || '');
+    if (data) {
+      setProfileInfo(data);
+    } else {
+      Snackbar({
+        type: 'error',
+        message: 'Unable to get User Details',
+      });
+      navigation.goBack();
+    }
+  };
 
   const onDelete = () => {
     setIsDeletePopup(true);
-  };
-
-  const uploadPhoto = async () => {
-    const result = await launchCamera(camerOptions);
-    console.log(result);
   };
 
   const showDeletePopup = () => {
@@ -43,6 +55,16 @@ export default function MyProfile({ navigation }: any) {
         />
       </CreaterModal>
     );
+  };
+
+  const editProfile = () => {
+    navigation.navigate('EditProfile', {
+      profile: {
+        name: profileInfo.username,
+        phoneno: profileInfo.phoneNumber,
+        imageUrl: profileInfo.profileImage,
+      },
+    });
   };
 
   const ProfileHeader = () => {
@@ -59,19 +81,24 @@ export default function MyProfile({ navigation }: any) {
 
         <View style={ProfileStyles.headerText}>
           <BoldText>MY PROFILE</BoldText>
-          <Text style={ProfileStyles.edit}>EDIT</Text>
+
+          <Pressable onPress={editProfile}>
+            <Text style={ProfileStyles.edit}>EDIT</Text>
+          </Pressable>
         </View>
       </View>
     );
   };
 
   const renderNetworkList = () => {
-    return networkList.map(list => {
+    return profileInfo.networks.map(list => {
       return (
         <View style={ProfileStyles.header} key={list.name}>
           <NormalText style={ProfileStyles.listname}>{list.name}</NormalText>
           <NormalText style={ProfileStyles.listname}>
-            {list.verificationMethod}
+            {list.type === NETWORK_LIST.ALUMNI
+              ? 'Email'
+              : `PIN: ${list.joiningCode}`}
           </NormalText>
           <Pressable onPress={onDelete}>
             <Icon name="trash-outline" size={16} />
@@ -86,19 +113,19 @@ export default function MyProfile({ navigation }: any) {
       <ProfileHeader />
 
       <View style={ProfileStyles.profile}>
-        <Pressable onPress={uploadPhoto} style={ProfileStyles.upload}>
+        <View style={ProfileStyles.upload}>
           <Icon name={'person-circle-outline'} size={150} color={'black'} />
-        </Pressable>
+        </View>
 
         <View style={ProfileStyles.info}>
           <View style={ProfileStyles.details}>
             <BoldText>Name:</BoldText>
-            <NormalText>Anuj Siraf</NormalText>
+            <NormalText>{profileInfo.username}</NormalText>
           </View>
 
           <View style={ProfileStyles.details}>
             <BoldText>Phone:</BoldText>
-            <NormalText>9871609422</NormalText>
+            <NormalText>{profileInfo.phoneNumber}</NormalText>
           </View>
         </View>
       </View>

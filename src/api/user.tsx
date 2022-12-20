@@ -1,6 +1,26 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import $axios from '../lib/axios';
 import { SaveFeedbackBody, UpdateUserBody } from '../types/users/user';
-import { BASE_URL } from '../utils/constants';
+import { BASE_URL, TOKEN } from '../utils/constants';
+
+/**
+ * Get User details
+ * @param id
+ * @returns
+ */
+
+export const GetUserDetails = async (id: string) => {
+  const request = await $axios
+    .patch(`${BASE_URL}/user/${id}`)
+    .then(res => {
+      return { data: res.data.data, error: null };
+    })
+    .catch(err => {
+      return { error: err.response.data, data: null };
+    });
+
+  return request;
+};
 
 /**
  * update User details
@@ -50,14 +70,19 @@ export const SaveFeedback = async (body: SaveFeedbackBody) => {
  * @returns
  */
 
-export const UploadMedia = async (imageFile: string) => {
+export const UploadMedia = async (imageFile: any) => {
   var bodyFormData = new FormData();
   bodyFormData.append('file', imageFile);
 
+  const accessTokenCookie = await AsyncStorage.getItem(TOKEN!);
+
+  console.log(imageFile);
+
   const request = await $axios
-    .post(`${BASE_URL}/media`, {
-      bodyFormData,
-      headers: { 'Content-Type': 'multipart/form-data' },
+    .post(`${BASE_URL}/media`, bodyFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     })
     .then(res => {
       if (res.status == 200) {

@@ -1,25 +1,27 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, Pressable, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { GetExistingPosts } from '../../../api/feeds';
 import Card from '../../../components/Card/Card';
 import NormalText from '../../../components/Text/NormalText';
 import SemiBoldText from '../../../components/Text/SemiBoldText';
-import { TOKEN } from '../../../utils/constants';
+import { USERID } from '../../../utils/constants';
 import Snackbar from '../../../utils/Toast';
 import ExisitngListingsStyles from './ExistingListings.styles';
 
 export default function ExistingListings({ navigation }: any) {
+  const [postList, setPostList] = useState([]);
+
   useEffect(() => {
     fetchExistingsPost();
   }, []);
 
   const fetchExistingsPost = async () => {
-    const user = await AsyncStorage.getItem(TOKEN);
-    const { data, err } = await GetExistingPosts('');
+    const userId = await AsyncStorage.getItem(USERID);
+    const { data, err } = await GetExistingPosts(userId || '');
     if (data) {
-      console.log(data);
+      setPostList(data);
     } else {
       Snackbar({
         type: 'error',

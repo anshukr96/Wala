@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
+import { launchCamera } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { PublishPost } from '../../../api/feeds';
+import { UploadMedia } from '../../../api/user';
 import PrimaryButton from '../../../components/Button/PrimaryButton';
 import SecondaryButton from '../../../components/Button/SecondaryButton';
 import PrimaryInput from '../../../components/Input';
@@ -9,6 +11,7 @@ import RadioButton from '../../../components/Radio/Radio';
 import NormalText from '../../../components/Text/NormalText';
 import { NETWORK_LISTING, OptionProps } from '../../../utils/constants';
 import Snackbar from '../../../utils/Toast';
+import { cameraOptions } from '../../MyProfile/EditProfile.screen';
 import {
   default as CreateListingsStyles,
   default as CreateListingStyle,
@@ -28,7 +31,7 @@ export default function CreateListings({ navigation }: any) {
     details: '',
     network: '',
   });
-
+  const [photoInfo, setPhotoInfo] = useState('');
   const [networkList, setNetworkList] = useState(NETWORK_LISTING);
 
   const ListingsHeader = () => {
@@ -78,8 +81,8 @@ export default function CreateListings({ navigation }: any) {
           showsVerticalScrollIndicator={true}>
           {networkList.length ? (
             <View style={CreateListingStyle.list}>
-              {networkList.map(item => (
-                <View key={item.id}>
+              {networkList.map((item, index) => (
+                <View key={index}>
                   <RadioButton
                     onPress={() => onRadioBtnClick(item)}
                     selected={item.selected}
@@ -117,6 +120,27 @@ export default function CreateListings({ navigation }: any) {
     );
   };
 
+  const uploadPhoto = async () => {
+    const { assets } = await launchCamera(cameraOptions);
+    if (assets?.length) {
+      let photo = {
+        uri: assets[0].uri,
+        type: assets[0].type,
+        name: assets[0].fileName,
+      };
+
+      const { data } = await UploadMedia(photo);
+      if (data) {
+        setPhotoInfo(data);
+      } else {
+        Snackbar({
+          type: 'error',
+          message: 'Unable to upload image',
+        });
+      }
+    }
+  };
+
   return (
     <View style={CreateListingStyle.container}>
       <ListingsHeader />
@@ -124,10 +148,21 @@ export default function CreateListings({ navigation }: any) {
       <View style={CreateListingStyle.upload}>
         <NormalText style={{ fontSize: 24 }}>New listing</NormalText>
 
-        <Image
-          source={require('../../../assets/images/upload.png')}
-          style={{ width: 120, height: 120 }}
-        />
+        <Pressable onPress={uploadPhoto}>
+          {photoInfo !== '' ? (
+            <Image
+              source={{
+                uri: photoInfo,
+              }}
+              style={{ width: 120, height: 120 }}
+            />
+          ) : (
+            <Image
+              source={require('../../../assets/images/upload.png')}
+              style={{ width: 120, height: 120 }}
+            />
+          )}
+        </Pressable>
         <NormalText>Upload Image</NormalText>
       </View>
 

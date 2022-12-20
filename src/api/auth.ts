@@ -38,7 +38,7 @@ export const verifyOTP = async (body: verifyOTPBody) => {
   const request = await $axios
     .post(`${BASE_URL}/user/verifyOtp`, body)
     .then(res => {
-      if (res.status === 200) {
+      if (res.status == 200) {
         return { data: res.data.data, error: null };
       } else {
         return { data: null, error: res.data.error };

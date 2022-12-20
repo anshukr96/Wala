@@ -7,6 +7,7 @@ import Feed from '../../screens/Feed/Feed.screen';
 import Feedback from '../../screens/Feedback/Feedback';
 import CreateListings from '../../screens/Listings/CreateListings/CreateListings';
 import ExistingListings from '../../screens/Listings/ExistingListings/ExistingListings';
+import EditProfile from '../../screens/MyProfile/EditProfile.screen';
 import MyProfile from '../../screens/MyProfile/MyProfile.screen';
 import Signout from '../../screens/SignOut/Signout';
 
@@ -24,6 +25,7 @@ export type StackParamList = {
   AddNetwork: undefined;
   CreateListings: undefined;
   ExistingListing: undefined;
+  EditProfile: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -36,6 +38,7 @@ const FeedStackScreen = () => {
       <Stack.Screen name="AddNetwork" component={AddNetwork} />
       <Stack.Screen name="CreateListings" component={CreateListings} />
       <Stack.Screen name="ExistingListing" component={ExistingListings} />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
     </Stack.Navigator>
   );
 };

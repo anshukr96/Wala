@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { createContext } from 'react';
 import { requestInterceptor } from '../lib/axiosInterceptor';
 import Login from '../screens/Login/Login.screen';
-import { TOKEN } from '../utils/constants';
+import { TOKEN, USERID } from '../utils/constants';
 import Snackbar from '../utils/Toast';
 import FeedDrawerMenu from './DrawerNavigation/FeedDrawerNavigation';
 import MyTabs from './TabNavigation/BottomTabNavigation';
@@ -23,14 +23,14 @@ export interface AuthContextInterface {
 }
 
 /* to see network call on debugging */
-// if (__DEV__) {
-//   global.XMLHttpRequest = global.originalXMLHttpRequest
-//     ? global.originalXMLHttpRequest
-//     : global.XMLHttpRequest;
-//   global.FormData = global.originalFormData
-//     ? global.originalFormData
-//     : global.FormData;
-// }
+if (__DEV__) {
+  global.XMLHttpRequest = global.originalXMLHttpRequest
+    ? global.originalXMLHttpRequest
+    : global.XMLHttpRequest;
+  global.FormData = global.originalFormData
+    ? global.originalFormData
+    : global.FormData;
+}
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 export const AuthContext = createContext<AuthContextInterface | null>(null);
@@ -43,6 +43,7 @@ const MainNavigation = () => {
           return {
             ...prevState,
             userToken: action.token,
+            userInfo: action.id,
             isLoading: false,
           };
         case 'SIGN_IN':
@@ -50,6 +51,7 @@ const MainNavigation = () => {
             ...prevState,
             isSignout: false,
             userToken: action.token,
+            userInfo: action.id,
           };
         case 'SIGN_OUT':
           return {
@@ -69,10 +71,11 @@ const MainNavigation = () => {
   React.useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
-      let userToken;
+      let userToken, id;
 
       try {
         userToken = await AsyncStorage.getItem(TOKEN);
+        id = await AsyncStorage.getItem(USERID);
       } catch (e) {
         Snackbar({
           type: 'error',
@@ -83,7 +86,9 @@ const MainNavigation = () => {
 
       requestInterceptor();
 
-      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+      console.log(id);
+
+      dispatch({ type: 'RESTORE_TOKEN', token: userToken, id: id });
     };
 
     bootstrapAsync();
@@ -97,8 +102,13 @@ const MainNavigation = () => {
         // After getting token, we need to persist the token using `SecureStore`
         // In the example, we'll use a dummy token
         AsyncStorage.setItem(TOKEN, data.token);
+        AsyncStorage.setItem(USERID, '6396083a41a34e3a90642bb8');
         requestInterceptor();
-        dispatch({ type: 'SIGN_IN', token: data.token });
+        dispatch({
+          type: 'SIGN_IN',
+          token: data.token,
+          userId: '6396083a41a34e3a90642bb8',
+        });
       },
       signOut: () => dispatch({ type: 'SIGN_OUT' }),
       signUp: async (data: any) => {
@@ -111,7 +121,7 @@ const MainNavigation = () => {
   return (
     <NavigationContainer>
       <AuthContext.Provider value={authContext}>
-        {!state.userToken ? (
+        {state.userToken ? (
           FeedDrawerMenu()
         ) : (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
