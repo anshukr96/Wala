@@ -89,6 +89,38 @@ export const GetNetworkDetail = async (networkID: string) => {
 };
 
 /**
+ * Delete network
+ * @param networkID
+ * @returns
+ */
+
+export const DeleteNetwork = async (networkID: string) => {
+  const request = await $axios
+    .get(`${BASE_URL}/network/${networkID}`)
+    .then(res => {
+      if (res.status == 201) {
+        return {
+          message: 'You have successfully deleted the network',
+          error: null,
+        };
+      } else {
+        return {
+          message: null,
+          error: 'Unable to delete the network',
+        };
+      }
+    })
+    .catch(_ => {
+      return {
+        message: null,
+        error: 'Unable to delete the network',
+      };
+    });
+
+  return request;
+};
+
+/**
  * Add network
  * @param requestBody
  * @returns

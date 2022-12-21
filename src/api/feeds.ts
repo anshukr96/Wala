@@ -7,12 +7,11 @@ import { BASE_URL } from '../utils/constants';
  * @returns
  */
 
-export const GetPostsList = async () => {
+export const GetPostsList = async (id: string) => {
   const request = await $axios
-    .get(`${BASE_URL}/post`)
+    .get(`${BASE_URL}/post/?user=${id}`)
     .then(res => {
       if (res.status === 200) {
-        console.log(res.data);
         return { data: res.data.data, err: null };
       }
       return { data: null, err: res.data.error };
@@ -49,12 +48,13 @@ export const SavePost = async (savePostBody: SavePostBody) => {
 /**
  * Publish Post
  * @param id
+ * @param body
  * @returns
  */
 
-export const PublishPost = async (id: string) => {
+export const PublishPost = async (id: string, body: any) => {
   const request = await $axios
-    .patch(`${BASE_URL}/post/makeItLive/${id}`)
+    .patch(`${BASE_URL}/post/makeItLive/${id}`, body)
     .then(res => {
       if (res.status === 200) {
         return { data: true, err: null };

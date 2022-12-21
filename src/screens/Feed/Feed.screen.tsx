@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, StatusBar, Text, View } from 'react-native';
@@ -6,6 +7,7 @@ import { GetPostsList } from '../../api/feeds';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import SecondaryButton from '../../components/Button/SecondaryButton';
 import { StackParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
+import { USERID } from '../../utils/constants';
 import Snackbar from '../../utils/Toast';
 import commonStyles from '../common.styles';
 import FeedStyles from './Feed.style';
@@ -25,7 +27,8 @@ const Feed = ({ navigation }: Props) => {
   }, []);
 
   const fetchPostList = async () => {
-    const { data } = await GetPostsList();
+    const userID = await AsyncStorage.getItem(USERID);
+    const { data } = await GetPostsList(userID || '');
     if (data) {
       setFeedList(data);
     } else {

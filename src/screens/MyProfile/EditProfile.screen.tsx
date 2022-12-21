@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { CameraOptions, launchCamera } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { UpdateUserDetails } from '../../api/user';
 import PrimaryButton from '../../components/Button/PrimaryButton';
+import PrimaryInput from '../../components/Input';
 import BoldText from '../../components/Text/BoldText';
-import NormalText from '../../components/Text/NormalText';
+import { UserInfoBody } from '../../types/users/user';
+import Snackbar from '../../utils/Toast';
 import ProfileStyles from './MyProfile.styles';
 
 export const cameraOptions: CameraOptions = {
@@ -17,6 +20,31 @@ export const cameraOptions: CameraOptions = {
 
 export default function EditProfile({ route, navigation }: any) {
   const { profile } = route.params;
+  const [profileInfo, setProfileInfo] = useState<UserInfoBody>({
+    username: profile.name,
+    phoneNumber: profile.phoneno,
+    profileImage: profile.imageUrl,
+  });
+
+  const updateUserInfo = async () => {
+    const requestbody = {
+      username: profileInfo.username,
+      profileImage: profileInfo.profileImage,
+    };
+
+    const { data, error } = await UpdateUserDetails(requestbody);
+    if (data) {
+      Snackbar({
+        message: data,
+        type: 'success',
+      });
+    } else {
+      Snackbar({
+        message: error,
+        type: 'error',
+      });
+    }
+  };
 
   const uploadPhoto = async () => {
     const result = await launchCamera(cameraOptions);
@@ -54,12 +82,20 @@ export default function EditProfile({ route, navigation }: any) {
         <View style={ProfileStyles.info}>
           <View style={ProfileStyles.details}>
             <BoldText>Name:</BoldText>
-            <NormalText>{profile.name}</NormalText>
+            <PrimaryInput
+              onChangeText={() => console.log('dfs')}
+              placeholder={'Username'}
+              value={profile.name}
+            />
           </View>
 
           <View style={ProfileStyles.details}>
             <BoldText>Phone:</BoldText>
-            <NormalText>{profile.phoneno}</NormalText>
+            <PrimaryInput
+              onChangeText={() => console.log('dfs')}
+              placeholder={'PHone Number'}
+              value={profile.phoneno}
+            />
           </View>
         </View>
       </View>
@@ -67,7 +103,7 @@ export default function EditProfile({ route, navigation }: any) {
       <View style={ProfileStyles.cta}>
         <PrimaryButton
           title="UPDATE PROFILE"
-          onPress={() => console.log('presses')}
+          onPress={updateUserInfo}
           style={ProfileStyles.button}
         />
       </View>

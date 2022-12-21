@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 
 interface PrimaryButtonProps {
   title: string;
-  onPress: () => void;
+  onPress?: () => void;
   style?: Record<string, any>;
 }
 

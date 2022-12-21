@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 import { launchCamera } from 'react-native-image-picker';
@@ -9,7 +10,7 @@ import SecondaryButton from '../../../components/Button/SecondaryButton';
 import PrimaryInput from '../../../components/Input';
 import RadioButton from '../../../components/Radio/Radio';
 import NormalText from '../../../components/Text/NormalText';
-import { NETWORK_LISTING, OptionProps } from '../../../utils/constants';
+import { NETWORK_LISTING, OptionProps, USERID } from '../../../utils/constants';
 import Snackbar from '../../../utils/Toast';
 import { cameraOptions } from '../../MyProfile/EditProfile.screen';
 import {
@@ -22,6 +23,7 @@ interface ListingInfoProps {
   price: string;
   details: string;
   network: string;
+  freeGiveAway: boolean;
 }
 
 export default function CreateListings({ navigation }: any) {
@@ -30,18 +32,14 @@ export default function CreateListings({ navigation }: any) {
     price: '',
     details: '',
     network: '',
+    freeGiveAway: false,
   });
   const [photoInfo, setPhotoInfo] = useState('');
   const [networkList, setNetworkList] = useState(NETWORK_LISTING);
 
-  const ListingsHeader = () => {
-    return (
-      <View>
-        <Pressable onPress={() => navigation.goBack()}>
-          <Icon name={'arrow-back-outline'} size={30} color={'black'} />
-        </Pressable>
-      </View>
-    );
+  const updateDetails = (text: any, type: string) => {
+    const details = { ...listingInfo, [type]: text };
+    setListingInfo(details);
   };
 
   const onRadioBtnClick = (item: OptionProps) => {
@@ -53,10 +51,29 @@ export default function CreateListings({ navigation }: any) {
     setNetworkList(updatedState);
   };
 
-  const publishNewPost = () => {
-    const data = PublishPost('');
+  const publishNewPost = async () => {
+    const id = await AsyncStorage.getItem(USERID);
+    const requestBody = {
+      query: {
+        _id: id,
+      },
+      payload: {
+        title: '',
+        networks: [],
+        price: '',
+        freeGiveAway: false,
+        images: '',
+        details: '',
+        published: true,
+      },
+    };
+    const data = PublishPost(id || '', requestBody);
     if (data) {
       console.log(data);
+      Snackbar({
+        type: 'success',
+        message: 'Post is created successfully',
+      });
     } else {
       Snackbar({
         type: 'error',
@@ -64,6 +81,37 @@ export default function CreateListings({ navigation }: any) {
         position: 'bottom',
       });
     }
+  };
+
+  const uploadPhoto = async () => {
+    const { assets } = await launchCamera(cameraOptions);
+    if (assets?.length) {
+      let photo = {
+        uri: assets[0].uri,
+        type: assets[0].type,
+        name: assets[0].fileName,
+      };
+
+      const { data } = await UploadMedia(photo);
+      if (data) {
+        setPhotoInfo(data);
+      } else {
+        Snackbar({
+          type: 'error',
+          message: 'Unable to upload image',
+        });
+      }
+    }
+  };
+
+  const ListingsHeader = () => {
+    return (
+      <View>
+        <Pressable onPress={() => navigation.goBack()}>
+          <Icon name={'arrow-back-outline'} size={30} color={'black'} />
+        </Pressable>
+      </View>
+    );
   };
 
   const renderNetworkPublish = () => {
@@ -120,27 +168,6 @@ export default function CreateListings({ navigation }: any) {
     );
   };
 
-  const uploadPhoto = async () => {
-    const { assets } = await launchCamera(cameraOptions);
-    if (assets?.length) {
-      let photo = {
-        uri: assets[0].uri,
-        type: assets[0].type,
-        name: assets[0].fileName,
-      };
-
-      const { data } = await UploadMedia(photo);
-      if (data) {
-        setPhotoInfo(data);
-      } else {
-        Snackbar({
-          type: 'error',
-          message: 'Unable to upload image',
-        });
-      }
-    }
-  };
-
   return (
     <View style={CreateListingStyle.container}>
       <ListingsHeader />
@@ -169,27 +196,29 @@ export default function CreateListings({ navigation }: any) {
       <View>
         <View>
           <PrimaryInput
-            onChangeText={() => console.log('dfs')}
+            onChangeText={text => updateDetails(text, 'heading')}
             placeholder={'Heading'}
             value={listingInfo.heading}
           />
         </View>
         <View style={CreateListingsStyles.price}>
           <PrimaryInput
-            onChangeText={() => console.log('dfs')}
+            onChangeText={text => updateDetails(text, 'price')}
             placeholder={'Price'}
             value={listingInfo.price}
             style={{ width: '30%' }}
           />
           <SecondaryButton
             title="Free giveaway!"
-            onPress={() => console.log('press givewawy')}
+            onPress={() =>
+              updateDetails(!listingInfo.freeGiveAway, 'freeGiveAway')
+            }
             style={{ height: 40, marginRight: 12 }}
           />
         </View>
         <View>
           <PrimaryInput
-            onChangeText={() => console.log('dfs')}
+            onChangeText={text => updateDetails(text, 'details')}
             placeholder={'Details'}
             value={listingInfo.details}
           />

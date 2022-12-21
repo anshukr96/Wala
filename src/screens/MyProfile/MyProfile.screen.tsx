@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { DeleteNetwork } from '../../api/network';
 import { GetUserDetails } from '../../api/user';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import BoldText from '../../components/Text/BoldText';
@@ -42,15 +43,27 @@ export default function MyProfile({ navigation }: any) {
     }
   };
 
-  const onDelete = () => {
-    setIsDeletePopup(true);
+  const onDelete = async () => {
+    const { message, error } = await DeleteNetwork('');
+    if (message) {
+      Snackbar({
+        type: 'success',
+        message: message,
+      });
+      setIsDeletePopup(true);
+    } else {
+      Snackbar({
+        type: 'error',
+        message: error ? error : '',
+      });
+    }
   };
 
   const showDeletePopup = () => {
     return (
       <CreaterModal onModalClose={() => setIsDeletePopup(false)}>
         <DeleteNetworkModal
-          onDelete={() => console.log('yes')}
+          onDelete={onDelete}
           cancelDelete={() => setIsDeletePopup(false)}
         />
       </CreaterModal>
@@ -91,21 +104,24 @@ export default function MyProfile({ navigation }: any) {
   };
 
   const renderNetworkList = () => {
-    return profileInfo.networks.map(list => {
-      return (
-        <View style={ProfileStyles.header} key={list.name}>
-          <NormalText style={ProfileStyles.listname}>{list.name}</NormalText>
-          <NormalText style={ProfileStyles.listname}>
-            {list.type === NETWORK_LIST.ALUMNI
-              ? 'Email'
-              : `PIN: ${list.joiningCode}`}
-          </NormalText>
-          <Pressable onPress={onDelete}>
-            <Icon name="trash-outline" size={16} />
-          </Pressable>
-        </View>
-      );
-    });
+    return (
+      profileInfo.networks &&
+      profileInfo.networks.map(list => {
+        return (
+          <View style={ProfileStyles.header} key={list.name}>
+            <NormalText style={ProfileStyles.listname}>{list.name}</NormalText>
+            <NormalText style={ProfileStyles.listname}>
+              {list.type === NETWORK_LIST.ALUMNI
+                ? 'Email'
+                : `PIN: ${list.joiningCode}`}
+            </NormalText>
+            <Pressable onPress={() => setIsDeletePopup(true)}>
+              <Icon name="trash-outline" size={16} />
+            </Pressable>
+          </View>
+        );
+      })
+    );
   };
 
   return (

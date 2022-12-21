@@ -18,7 +18,7 @@ export default function Feedback({ navigation }: any) {
   const sendFeedback = async () => {
     const requestBody = {
       text: feedback,
-      type: selectedOption,
+      reason: selectedOption,
     };
     const { data, error } = await SaveFeedback(requestBody);
     if (data) {

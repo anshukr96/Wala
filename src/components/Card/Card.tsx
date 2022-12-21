@@ -48,8 +48,10 @@ export default function Card() {
 
   const deleteListing = async () => {
     const userID = '';
+    const option = options.filter(reason => reason.selected)[0].name;
     const body = {
-      reason: '',
+      takeDownReason: option,
+      takeDown: true,
     };
     const { data } = await DeletePost(userID, body);
     if (data) {
@@ -57,6 +59,7 @@ export default function Card() {
         type: 'success',
         message: 'Post is removed successfully',
       });
+      setIsMenuOpened(false);
     } else {
       Snackbar({
         type: 'error',
@@ -85,10 +88,7 @@ export default function Card() {
 
         <View style={CardStyles.dropdownCTA}>
           <Pressable onPress={deleteListing}>
-            <SecondaryButton
-              title="OK"
-              onPress={() => setIsMenuOpened(false)}
-            />
+            <SecondaryButton title="OK" />
           </Pressable>
 
           <Pressable onPress={() => setIsMenuOpened(false)}>

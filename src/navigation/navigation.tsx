@@ -102,12 +102,12 @@ const MainNavigation = () => {
         // After getting token, we need to persist the token using `SecureStore`
         // In the example, we'll use a dummy token
         AsyncStorage.setItem(TOKEN, data.token);
-        AsyncStorage.setItem(USERID, '6396083a41a34e3a90642bb8');
+        AsyncStorage.setItem(USERID, data.id);
         requestInterceptor();
         dispatch({
           type: 'SIGN_IN',
           token: data.token,
-          userId: '6396083a41a34e3a90642bb8',
+          userId: data.id,
         });
       },
       signOut: () => dispatch({ type: 'SIGN_OUT' }),
