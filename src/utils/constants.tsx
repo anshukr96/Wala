@@ -24,22 +24,22 @@ export const TOAST_POSITION = {
 };
 export const OPTIONS = [
   {
-    id: 1,
+    _id: '1',
     name: 'Request creation of  a new network',
     selected: false,
   },
   {
-    id: 2,
+    _id: '2',
     name: 'Request access to existing network',
     selected: false,
   },
   {
-    id: 3,
+    _id: '3',
     name: 'Feedback/Suggestions',
     selected: false,
   },
   {
-    id: 4,
+    _id: '4',
     name: 'Other',
     selected: false,
   },
@@ -47,17 +47,17 @@ export const OPTIONS = [
 
 export const MENU_OPTIONS = [
   {
-    id: 1,
+    _id: '1',
     name: 'Sold',
     selected: false,
   },
   {
-    id: 2,
+    _id: '2',
     name: 'Don’t want to sell',
     selected: false,
   },
   {
-    id: 3,
+    _id: '3',
     name: 'Others',
     selected: false,
   },
@@ -70,7 +70,7 @@ export const NETWORK_LISTING = [
 ];
 
 export interface OptionProps {
-  id: number;
+  _id: string;
   name: JSX.Element | string;
   selected: boolean;
 }

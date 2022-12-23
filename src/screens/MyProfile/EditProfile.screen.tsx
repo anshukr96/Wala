@@ -22,14 +22,20 @@ export default function EditProfile({ route, navigation }: any) {
   const { profile } = route.params;
   const [profileInfo, setProfileInfo] = useState<UserInfoBody>({
     username: profile.name,
-    phoneNumber: profile.phoneno,
+    email: profile.email,
     profileImage: profile.imageUrl,
   });
+
+  const updateDetails = (text: any, type: string) => {
+    const details = { ...profileInfo, [type]: text };
+    setProfileInfo(details);
+  };
 
   const updateUserInfo = async () => {
     const requestbody = {
       username: profileInfo.username,
       profileImage: profileInfo.profileImage,
+      email: profileInfo?.email,
     };
 
     const { data, error } = await UpdateUserDetails(requestbody);
@@ -38,6 +44,7 @@ export default function EditProfile({ route, navigation }: any) {
         message: data,
         type: 'success',
       });
+      navigation.goBack();
     } else {
       Snackbar({
         message: error,
@@ -48,7 +55,6 @@ export default function EditProfile({ route, navigation }: any) {
 
   const uploadPhoto = async () => {
     const result = await launchCamera(cameraOptions);
-    console.log(result);
   };
 
   const ProfileHeader = () => {
@@ -83,18 +89,20 @@ export default function EditProfile({ route, navigation }: any) {
           <View style={ProfileStyles.details}>
             <BoldText>Name:</BoldText>
             <PrimaryInput
-              onChangeText={() => console.log('dfs')}
+              onChangeText={text => updateDetails(text, 'username')}
               placeholder={'Username'}
-              value={profile.name}
+              value={profileInfo.username}
+              style={{ width: 250 }}
             />
           </View>
 
           <View style={ProfileStyles.details}>
-            <BoldText>Phone:</BoldText>
+            <BoldText>Email:</BoldText>
             <PrimaryInput
-              onChangeText={() => console.log('dfs')}
-              placeholder={'PHone Number'}
-              value={profile.phoneno}
+              onChangeText={text => updateDetails(text, 'email')}
+              placeholder={'Email'}
+              value={profileInfo.email || ''}
+              style={{ width: 250 }}
             />
           </View>
         </View>

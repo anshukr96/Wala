@@ -11,13 +11,13 @@ import BoldText from '../Text/BoldText';
 import NormalText from '../Text/NormalText';
 import CardStyles from './Card.styles';
 
-export default function Card() {
+export default function Card({ posts, onPostDelete }: any) {
   const [options, setOptions] = useState<OptionProps[]>(MENU_OPTIONS);
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
   const onRadioBtnClick = (item: OptionProps) => {
     let updatedState = options.map(isSelectedItem =>
-      isSelectedItem.id === item.id
+      isSelectedItem._id === item._id
         ? { ...isSelectedItem, selected: true }
         : { ...isSelectedItem, selected: false },
     );
@@ -47,19 +47,19 @@ export default function Card() {
   };
 
   const deleteListing = async () => {
-    const userID = '';
     const option = options.filter(reason => reason.selected)[0].name;
     const body = {
       takeDownReason: option,
       takeDown: true,
     };
-    const { data } = await DeletePost(userID, body);
+    const { data } = await DeletePost(posts._id, body);
     if (data) {
       Snackbar({
         type: 'success',
         message: 'Post is removed successfully',
       });
       setIsMenuOpened(false);
+      onPostDelete();
     } else {
       Snackbar({
         type: 'error',
@@ -79,7 +79,7 @@ export default function Card() {
               <RadioButton
                 onPress={() => onRadioBtnClick(item)}
                 selected={item.selected}
-                key={item.id}>
+                key={item._id}>
                 {item.name}
               </RadioButton>
             </View>
@@ -87,8 +87,8 @@ export default function Card() {
         </View>
 
         <View style={CardStyles.dropdownCTA}>
-          <Pressable onPress={deleteListing}>
-            <SecondaryButton title="OK" />
+          <Pressable>
+            <SecondaryButton title="OK" onPress={deleteListing} />
           </Pressable>
 
           <Pressable onPress={() => setIsMenuOpened(false)}>
@@ -112,8 +112,11 @@ export default function Card() {
       <View style={{ position: 'relative' }}>
         <View style={CardStyles.header}>
           <View>
-            <BoldText>Sofa</BoldText>
-            <NormalText style={CardStyles.info}>Price: Rs 15,000</NormalText>
+            <BoldText>{posts.title}</BoldText>
+            <View style={{ flexDirection: 'row' }}>
+              <NormalText style={CardStyles.info}>Price: Rs </NormalText>
+              <NormalText style={CardStyles.info}>{posts.price}</NormalText>
+            </View>
           </View>
 
           <Pressable onPress={() => setIsMenuOpened(menu => !menu)}>
@@ -131,7 +134,7 @@ export default function Card() {
           </View>
           <View style={CardStyles.details}>
             <NormalText style={CardStyles.detailText}>Connection:</NormalText>
-            <BoldText style={CardStyles.detailText}>Resedential,</BoldText>
+            <BoldText>{posts.networks[0].name}</BoldText>
           </View>
           <View>
             <NormalText style={{ textDecorationLine: 'underline' }}>

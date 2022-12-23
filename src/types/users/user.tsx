@@ -19,9 +19,10 @@ export interface NetworkInfo {
 }
 
 export interface UserInfoBody {
-  phoneNumber: string;
+  phoneNumber?: string;
   username: string;
-  profileImage: string;
+  email?: string;
+  profileImage?: string;
   _id?: string;
   networks?: NetworkInfo[];
 }

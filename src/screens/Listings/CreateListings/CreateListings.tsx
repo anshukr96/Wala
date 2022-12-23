@@ -1,18 +1,18 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 import { launchCamera } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { PublishPost } from '../../../api/feeds';
+import { CreatePost } from '../../../api/feeds';
+import { GetNetworkList } from '../../../api/network';
 import { UploadMedia } from '../../../api/user';
 import PrimaryButton from '../../../components/Button/PrimaryButton';
 import SecondaryButton from '../../../components/Button/SecondaryButton';
 import PrimaryInput from '../../../components/Input';
 import RadioButton from '../../../components/Radio/Radio';
 import NormalText from '../../../components/Text/NormalText';
-import { NETWORK_LISTING, OptionProps, USERID } from '../../../utils/constants';
+import { CreatePostBody } from '../../../types/feed/feed';
+import { OptionProps } from '../../../utils/constants';
 import Snackbar from '../../../utils/Toast';
-import { cameraOptions } from '../../MyProfile/EditProfile.screen';
 import {
   default as CreateListingsStyles,
   default as CreateListingStyle,
@@ -22,20 +22,60 @@ interface ListingInfoProps {
   heading: string;
   price: string;
   details: string;
-  network: string;
+  network: string[];
   freeGiveAway: boolean;
 }
+export declare type MediaType = 'photo' | 'video' | 'mixed';
+export declare type PhotoQuality =
+  | 0
+  | 0.1
+  | 0.2
+  | 0.3
+  | 0.4
+  | 0.5
+  | 0.6
+  | 0.7
+  | 0.8
+  | 0.9
+  | 1;
 
 export default function CreateListings({ navigation }: any) {
   const [listingInfo, setListingInfo] = useState<ListingInfoProps>({
     heading: '',
     price: '',
     details: '',
-    network: '',
+    network: [''],
     freeGiveAway: false,
   });
   const [photoInfo, setPhotoInfo] = useState('');
-  const [networkList, setNetworkList] = useState(NETWORK_LISTING);
+  const [networkList, setNetworkList] = useState([
+    {
+      _id: '',
+      name: '',
+      type: '',
+      selected: false,
+    },
+  ]);
+
+  useEffect(() => {
+    getNetowrkDetails();
+  }, []);
+
+  const getNetowrkDetails = async () => {
+    const { data } = await GetNetworkList();
+    if (data) {
+      let list: any = [];
+      data.map((network: any) => {
+        list.push({ ...network, selected: false });
+      });
+      setNetworkList(list);
+    } else {
+      Snackbar({
+        type: 'error',
+        message: 'Unable to get Netowrk details',
+      });
+    }
+  };
 
   const updateDetails = (text: any, type: string) => {
     const details = { ...listingInfo, [type]: text };
@@ -43,37 +83,46 @@ export default function CreateListings({ navigation }: any) {
   };
 
   const onRadioBtnClick = (item: OptionProps) => {
+    let listInfo = { ...listingInfo };
     let updatedState = networkList.map(isSelectedItem =>
-      isSelectedItem.id === item.id
+      isSelectedItem._id === item._id
         ? { ...isSelectedItem, selected: true }
         : { ...isSelectedItem, selected: false },
     );
     setNetworkList(updatedState);
+    listInfo = { ...listInfo, network: [item._id] };
+    setListingInfo(listInfo);
   };
 
-  const publishNewPost = async () => {
-    const id = await AsyncStorage.getItem(USERID);
-    const requestBody = {
-      query: {
-        _id: id,
-      },
-      payload: {
-        title: '',
-        networks: [],
-        price: '',
-        freeGiveAway: false,
-        images: '',
-        details: '',
-        published: true,
-      },
+  const publishNewPost = async (isPublish = false) => {
+    if (!listingInfo.network.length) {
+      Snackbar({
+        type: 'error',
+        message: 'choose network where you want to show  ',
+        message2: 'your post',
+      });
+      return;
+    }
+    const requestBody: CreatePostBody = {
+      title: listingInfo.heading,
+      networks: listingInfo.network,
+      price: listingInfo.price,
+      freeGiveAway: listingInfo.freeGiveAway,
+      images: [
+        'https://cdn.pixabay.com/photo/2014/02/27/16/10/flowers-276014__480.jpg',
+      ],
+      details: listingInfo.details,
+      published: true,
     };
-    const data = PublishPost(id || '', requestBody);
+    !isPublish ? delete requestBody?.published : null;
+
+    const data = await CreatePost(requestBody);
     if (data) {
-      console.log(data);
       Snackbar({
         type: 'success',
         message: 'Post is created successfully',
       });
+      navigation.navigate('Listing');
     } else {
       Snackbar({
         type: 'error',
@@ -84,15 +133,15 @@ export default function CreateListings({ navigation }: any) {
   };
 
   const uploadPhoto = async () => {
+    const cameraOptions = {
+      maxWidth: 250,
+      maxHeight: 250,
+      quality: 0.7 as PhotoQuality,
+      mediaType: 'photo' as MediaType,
+    };
     const { assets } = await launchCamera(cameraOptions);
     if (assets?.length) {
-      let photo = {
-        uri: assets[0].uri,
-        type: assets[0].type,
-        name: assets[0].fileName,
-      };
-
-      const { data } = await UploadMedia(photo);
+      const { data } = await UploadMedia(assets[0]);
       if (data) {
         setPhotoInfo(data);
       } else {
@@ -134,7 +183,7 @@ export default function CreateListings({ navigation }: any) {
                   <RadioButton
                     onPress={() => onRadioBtnClick(item)}
                     selected={item.selected}
-                    key={item.id}>
+                    key={item._id}>
                     {item.name}
                   </RadioButton>
                 </View>
@@ -154,13 +203,13 @@ export default function CreateListings({ navigation }: any) {
           {networkList.length && (
             <PrimaryButton
               title="PUBLISH"
-              onPress={() => console.log('publish')}
+              onPress={() => publishNewPost(true)}
             />
           )}
 
           <SecondaryButton
             title="SAVE WITHOUT PUBLISHING"
-            onPress={publishNewPost}
+            onPress={() => publishNewPost(false)}
             style={CreateListingStyle.saveCTA}
           />
         </View>
@@ -169,63 +218,69 @@ export default function CreateListings({ navigation }: any) {
   };
 
   return (
-    <View style={CreateListingStyle.container}>
-      <ListingsHeader />
+    <ScrollView style={CreateListingStyle.scrollContainer}>
+      <View style={CreateListingStyle.container}>
+        <ListingsHeader />
 
-      <View style={CreateListingStyle.upload}>
-        <NormalText style={{ fontSize: 24 }}>New listing</NormalText>
+        <View style={CreateListingStyle.upload}>
+          <NormalText style={{ fontSize: 24 }}>New listing</NormalText>
 
-        <Pressable onPress={uploadPhoto}>
-          {photoInfo !== '' ? (
-            <Image
-              source={{
-                uri: photoInfo,
+          <Pressable onPress={uploadPhoto}>
+            {photoInfo !== '' ? (
+              <Image
+                source={{
+                  uri: photoInfo,
+                }}
+                style={{ width: 120, height: 120 }}
+              />
+            ) : (
+              <Image
+                source={require('../../../assets/images/upload.png')}
+                style={{ width: 120, height: 120 }}
+              />
+            )}
+          </Pressable>
+          <NormalText>Upload Image</NormalText>
+        </View>
+
+        <View>
+          <View>
+            <PrimaryInput
+              onChangeText={text => updateDetails(text, 'heading')}
+              placeholder={'Heading'}
+              value={listingInfo.heading}
+            />
+          </View>
+          <View style={CreateListingsStyles.price}>
+            <PrimaryInput
+              onChangeText={text => updateDetails(text, 'price')}
+              placeholder={'Price'}
+              value={listingInfo.price}
+              style={{ width: '30%' }}
+            />
+            <SecondaryButton
+              title="Free giveaway!"
+              onPress={() =>
+                updateDetails(!listingInfo.freeGiveAway, 'freeGiveAway')
+              }
+              style={{
+                height: 40,
+                marginRight: 12,
+                backgroundColor: listingInfo.freeGiveAway ? '#65a765' : 'gray',
               }}
-              style={{ width: 120, height: 120 }}
             />
-          ) : (
-            <Image
-              source={require('../../../assets/images/upload.png')}
-              style={{ width: 120, height: 120 }}
+          </View>
+          <View>
+            <PrimaryInput
+              onChangeText={text => updateDetails(text, 'details')}
+              placeholder={'Details'}
+              value={listingInfo.details}
             />
-          )}
-        </Pressable>
-        <NormalText>Upload Image</NormalText>
-      </View>
+          </View>
+        </View>
 
-      <View>
-        <View>
-          <PrimaryInput
-            onChangeText={text => updateDetails(text, 'heading')}
-            placeholder={'Heading'}
-            value={listingInfo.heading}
-          />
-        </View>
-        <View style={CreateListingsStyles.price}>
-          <PrimaryInput
-            onChangeText={text => updateDetails(text, 'price')}
-            placeholder={'Price'}
-            value={listingInfo.price}
-            style={{ width: '30%' }}
-          />
-          <SecondaryButton
-            title="Free giveaway!"
-            onPress={() =>
-              updateDetails(!listingInfo.freeGiveAway, 'freeGiveAway')
-            }
-            style={{ height: 40, marginRight: 12 }}
-          />
-        </View>
-        <View>
-          <PrimaryInput
-            onChangeText={text => updateDetails(text, 'details')}
-            placeholder={'Details'}
-            value={listingInfo.details}
-          />
-        </View>
+        {renderNetworkPublish()}
       </View>
-
-      {renderNetworkPublish()}
-    </View>
+    </ScrollView>
   );
 }

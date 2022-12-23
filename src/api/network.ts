@@ -96,9 +96,9 @@ export const GetNetworkDetail = async (networkID: string) => {
 
 export const DeleteNetwork = async (networkID: string) => {
   const request = await $axios
-    .get(`${BASE_URL}/network/${networkID}`)
+    .delete(`${BASE_URL}/network/${networkID}`)
     .then(res => {
-      if (res.status == 201) {
+      if (res.status == 204 || res.status === 200) {
         return {
           message: 'You have successfully deleted the network',
           error: null,

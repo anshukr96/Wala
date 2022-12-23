@@ -1,17 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Image, Pressable, View } from 'react-native';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { GetExistingPosts } from '../../../api/feeds';
 import Card from '../../../components/Card/Card';
 import NormalText from '../../../components/Text/NormalText';
 import SemiBoldText from '../../../components/Text/SemiBoldText';
+import { PostBody } from '../../../types/feed/feed';
 import { USERID } from '../../../utils/constants';
 import Snackbar from '../../../utils/Toast';
 import ExisitngListingsStyles from './ExistingListings.styles';
 
 export default function ExistingListings({ navigation }: any) {
-  const [postList, setPostList] = useState([]);
+  const [postList, setPostList] = useState<PostBody[] | []>([]);
 
   useEffect(() => {
     fetchExistingsPost();
@@ -40,6 +41,21 @@ export default function ExistingListings({ navigation }: any) {
     );
   };
 
+  const renderPosts = () => {
+    return (
+      <ScrollView
+        contentContainerStyle={ExisitngListingsStyles.scrollContainer}
+        persistentScrollbar={true}
+        showsVerticalScrollIndicator={true}>
+        <View>
+          {postList.map(post => {
+            return <Card posts={post} onPostDelete={fetchExistingsPost} />;
+          })}
+        </View>
+      </ScrollView>
+    );
+  };
+
   return (
     <View>
       <ListingsHeader />
@@ -59,9 +75,7 @@ export default function ExistingListings({ navigation }: any) {
         <NormalText>Existing posts</NormalText>
       </View>
 
-      <View>
-        <Card />
-      </View>
+      {renderPosts()}
     </View>
   );
 }

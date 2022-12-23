@@ -1,6 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import $axios from '../lib/axios';
-import { SaveFeedbackBody, UpdateUserBody } from '../types/users/user';
-import { BASE_URL } from '../utils/constants';
+import { SaveFeedbackBody, UserInfoBody } from '../types/users/user';
+import { BASE_URL, TOKEN } from '../utils/constants';
 
 /**
  * Get User details
@@ -10,11 +12,12 @@ import { BASE_URL } from '../utils/constants';
 
 export const GetUserDetails = async (id: string) => {
   const request = await $axios
-    .patch(`${BASE_URL}/user/${id}`)
+    .get(`${BASE_URL}/user/${id}`)
     .then(res => {
       return { data: res.data.data, error: null };
     })
     .catch(err => {
+      console.log(err);
       return { error: err.response.data, data: null };
     });
 
@@ -27,7 +30,7 @@ export const GetUserDetails = async (id: string) => {
  * @returns
  */
 
-export const UpdateUserDetails = async (body: UpdateUserBody) => {
+export const UpdateUserDetails = async (body: UserInfoBody) => {
   const request = await $axios
     .patch(`${BASE_URL}/user`, body)
     .then(res => {
@@ -74,16 +77,20 @@ export const SaveFeedback = async (body: SaveFeedbackBody) => {
  */
 
 export const UploadMedia = async (imageFile: any) => {
-  var bodyFormData = new FormData();
+  const token = await AsyncStorage.getItem(TOKEN);
+
+  let bodyFormData = new FormData();
   bodyFormData.append('file', imageFile);
 
-  const request = await $axios
+  const request = await axios
     .post(`${BASE_URL}/media`, bodyFormData, {
       headers: {
         'Content-Type': 'multipart/form-data',
+        Authorization: token,
       },
     })
     .then(res => {
+      console.log(res, 'ghg');
       if (res.status == 200) {
         return { data: res.data, error: null };
       } else {

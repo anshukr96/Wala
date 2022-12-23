@@ -27,6 +27,7 @@ export default function Feedback({ navigation }: any) {
         message: 'We hear you!! Thank you for sending feedback',
         position: 'bottom',
       });
+      navigation.goBack();
     } else {
       Snackbar({
         type: 'error',
@@ -38,7 +39,7 @@ export default function Feedback({ navigation }: any) {
 
   const onRadioBtnClick = (item: OptionProps) => {
     let updatedState = options.map(isSelectedItem =>
-      isSelectedItem.id === item.id
+      isSelectedItem._id === item._id
         ? { ...isSelectedItem, selected: true }
         : { ...isSelectedItem, selected: false },
     );
@@ -77,7 +78,7 @@ export default function Feedback({ navigation }: any) {
             <RadioButton
               onPress={() => onRadioBtnClick(item)}
               selected={item.selected}
-              key={item.id}>
+              key={item._id}>
               {item.name}
             </RadioButton>
           </View>

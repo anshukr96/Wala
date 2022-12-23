@@ -23,6 +23,7 @@ export default StyleSheet.create({
   details: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginVertical: 12,
   },
   upload: {

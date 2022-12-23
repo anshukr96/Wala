@@ -1,5 +1,4 @@
 import $axios from '../lib/axios';
-import { SavePostBody } from '../types/feed/feed';
 import { BASE_URL } from '../utils/constants';
 
 /**
@@ -7,9 +6,9 @@ import { BASE_URL } from '../utils/constants';
  * @returns
  */
 
-export const GetPostsList = async (id: string) => {
+export const GetPostsList = async () => {
   const request = await $axios
-    .get(`${BASE_URL}/post/?user=${id}`)
+    .get(`${BASE_URL}/post?published=true`)
     .then(res => {
       if (res.status === 200) {
         return { data: res.data.data, err: null };
@@ -29,7 +28,7 @@ export const GetPostsList = async (id: string) => {
  * @returns
  */
 
-export const SavePost = async (savePostBody: SavePostBody) => {
+export const SavePost = async (savePostBody: any) => {
   const request = await $axios
     .patch(`${BASE_URL}/post`, savePostBody)
     .then(res => {
@@ -52,9 +51,9 @@ export const SavePost = async (savePostBody: SavePostBody) => {
  * @returns
  */
 
-export const PublishPost = async (id: string, body: any) => {
+export const CreatePost = async (body: any) => {
   const request = await $axios
-    .patch(`${BASE_URL}/post/makeItLive/${id}`, body)
+    .post(`${BASE_URL}/post`, body)
     .then(res => {
       if (res.status === 200) {
         return { data: true, err: null };
@@ -70,16 +69,16 @@ export const PublishPost = async (id: string, body: any) => {
 
 /**
  * Delete post
- * @param id
+ * @param postID
  * @param  body
  * @returns
  */
 
-export const DeletePost = async (id: string, body: any) => {
+export const DeletePost = async (postID: string, body: any) => {
   const request = await $axios
-    .delete(`${BASE_URL}/post/${id}`)
+    .delete(`${BASE_URL}/post/${postID}`, body)
     .then(res => {
-      if (res.status === 200) {
+      if (res.status === 200 || res.status === 204) {
         return { data: true, err: null };
       }
       return { data: false, err: res };

@@ -1,6 +1,13 @@
-import { StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    paddingTop: StatusBar.currentHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 300,
+  },
   container: {
     margin: 32,
   },

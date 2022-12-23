@@ -24,6 +24,7 @@ export default function BoldText({ children, style }: BoldTextProps) {
 export const TextStyles = StyleSheet.create({
   container: {
     fontFamily: 'Lexend-Bold',
+    fontWeight: 'bold',
     fontSize: 16,
   },
 });

@@ -23,6 +23,7 @@ export default function MyProfile({ navigation }: any) {
     networks: [],
   });
   const [isDeletePopup, setIsDeletePopup] = useState(false);
+  const [selectedNetwork, setSelectedNetwork] = useState('');
 
   useEffect(() => {
     getUserInfo();
@@ -44,13 +45,15 @@ export default function MyProfile({ navigation }: any) {
   };
 
   const onDelete = async () => {
-    const { message, error } = await DeleteNetwork('');
+    const { message, error } = await DeleteNetwork(selectedNetwork);
     if (message) {
       Snackbar({
         type: 'success',
         message: message,
       });
       setIsDeletePopup(true);
+      setSelectedNetwork('');
+      navigation.goBack();
     } else {
       Snackbar({
         type: 'error',
@@ -76,6 +79,7 @@ export default function MyProfile({ navigation }: any) {
         name: profileInfo.username,
         phoneno: profileInfo.phoneNumber,
         imageUrl: profileInfo.profileImage,
+        email: profileInfo.email,
       },
     });
   };
@@ -115,7 +119,11 @@ export default function MyProfile({ navigation }: any) {
                 ? 'Email'
                 : `PIN: ${list.joiningCode}`}
             </NormalText>
-            <Pressable onPress={() => setIsDeletePopup(true)}>
+            <Pressable
+              onPress={() => {
+                setIsDeletePopup(true);
+                setSelectedNetwork(list._id);
+              }}>
               <Icon name="trash-outline" size={16} />
             </Pressable>
           </View>
@@ -141,7 +149,9 @@ export default function MyProfile({ navigation }: any) {
 
           <View style={ProfileStyles.details}>
             <BoldText>Phone:</BoldText>
-            <NormalText>{profileInfo.phoneNumber}</NormalText>
+            <NormalText style={{ marginLeft: 12 }}>
+              {profileInfo.phoneNumber || ''}
+            </NormalText>
           </View>
         </View>
       </View>
@@ -160,7 +170,7 @@ export default function MyProfile({ navigation }: any) {
         <View style={ProfileStyles.cta}>
           <PrimaryButton
             title="ADD NETWORK"
-            onPress={() => console.log('presses')}
+            onPress={() => navigation.navigate('AddNetwork')}
             style={ProfileStyles.button}
           />
         </View>
