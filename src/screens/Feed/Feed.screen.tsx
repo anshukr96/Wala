@@ -1,13 +1,13 @@
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, StatusBar, Text, View } from 'react-native';
+import { Pressable, ScrollView, StatusBar, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { GetPostsList } from '../../api/feeds';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import SecondaryButton from '../../components/Button/SecondaryButton';
+import Card from '../../components/Card/Card';
 import { StackParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
 import Snackbar from '../../utils/Toast';
-import commonStyles from '../common.styles';
 import FeedStyles from './Feed.style';
 
 type Props = DrawerScreenProps<StackParamList, 'Listing'>;
@@ -58,17 +58,35 @@ const Feed = ({ navigation }: Props) => {
     );
   };
 
+  const renderPosts = () => {
+    if (feedList.length) {
+      return (
+        <ScrollView
+          contentContainerStyle={FeedStyles.scrollContainer}
+          persistentScrollbar={true}
+          showsVerticalScrollIndicator={true}>
+          <View>
+            {feedList.map(post => {
+              return (
+                <View>
+                  <Card posts={post} />
+                </View>
+              );
+            })}
+          </View>
+        </ScrollView>
+      );
+    }
+  };
+
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor={'#f9f9f9'} />
-      <SafeAreaView style={commonStyles.SafeAreaView1} />
-      <SafeAreaView style={commonStyles.SafeAreaView2}>
-        <FeedHeader
-          onMenuToggle={() => navigation.toggleDrawer()}
-          onPress={() => navigation.navigate('ExistingListing')}
-        />
-        {feedList.length ? <></> : renderNoNetwork()}
-      </SafeAreaView>
+      <FeedHeader
+        onMenuToggle={() => navigation.toggleDrawer()}
+        onPress={() => navigation.navigate('ExistingListing')}
+      />
+      {feedList.length ? renderPosts() : renderNoNetwork()}
     </>
   );
 };

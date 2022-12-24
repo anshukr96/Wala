@@ -13,11 +13,12 @@ export interface PostBody {
 }
 
 export interface CreatePostBody {
-  title: string;
+  title?: string;
   freeGiveAway: boolean;
   images: string[];
-  networks: string[];
+  networks?: string[];
   price: string;
   published?: boolean;
-  details: string;
+  details?: string;
+  _id?: string;
 }

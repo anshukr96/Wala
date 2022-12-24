@@ -41,6 +41,12 @@ export default function ExistingListings({ navigation }: any) {
     );
   };
 
+  const onEditPost = (posts: PostBody) => {
+    navigation.navigate('CreateListings', {
+      listDetails: posts,
+    });
+  };
+
   const renderPosts = () => {
     return (
       <ScrollView
@@ -49,7 +55,14 @@ export default function ExistingListings({ navigation }: any) {
         showsVerticalScrollIndicator={true}>
         <View>
           {postList.map(post => {
-            return <Card posts={post} onPostDelete={fetchExistingsPost} />;
+            return (
+              <Card
+                posts={post}
+                onPostDelete={fetchExistingsPost}
+                onPostEdit={onEditPost}
+                isEdit={true}
+              />
+            );
           })}
         </View>
       </ScrollView>
@@ -60,7 +73,10 @@ export default function ExistingListings({ navigation }: any) {
     <View>
       <ListingsHeader />
 
-      <Pressable onPress={() => navigation.navigate('CreateListings')}>
+      <Pressable
+        onPress={() =>
+          navigation.navigate('CreateListings', { listDetails: {} })
+        }>
         <View style={ExisitngListingsStyles.newlist}>
           <Image
             source={require('../../../assets/images/add.png')}

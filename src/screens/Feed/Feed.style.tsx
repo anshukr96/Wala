@@ -1,6 +1,13 @@
-import { StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 
 const FeedStyles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    paddingTop: StatusBar.currentHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 300,
+  },
   container: {
     flexGrow: 1,
     paddingTop: 10,

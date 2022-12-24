@@ -58,10 +58,33 @@ export const CreatePost = async (body: any) => {
       if (res.status === 200) {
         return { data: true, err: null };
       }
-      return { data: false, err: res };
+      return { data: false, err: res.data.error };
     })
     .catch(err => {
-      return { data: false, err: err };
+      return { data: false, err: err.response?.data.error };
+    });
+
+  return request;
+};
+
+/**
+ * Publish Post
+ * @param id
+ * @param body
+ * @returns
+ */
+
+export const UpdatePost = async (body: any) => {
+  const request = await $axios
+    .patch(`${BASE_URL}/post`, body)
+    .then(res => {
+      if (res.status === 200) {
+        return { data: true, err: null };
+      }
+      return { data: false, err: res.data.error };
+    })
+    .catch(err => {
+      return { data: false, err: err.response?.data.error };
     });
 
   return request;

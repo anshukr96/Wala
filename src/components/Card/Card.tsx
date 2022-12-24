@@ -11,7 +11,12 @@ import BoldText from '../Text/BoldText';
 import NormalText from '../Text/NormalText';
 import CardStyles from './Card.styles';
 
-export default function Card({ posts, onPostDelete }: any) {
+export default function Card({
+  posts,
+  onPostDelete,
+  onPostEdit,
+  isEdit = false,
+}: any) {
   const [options, setOptions] = useState<OptionProps[]>(MENU_OPTIONS);
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
@@ -106,7 +111,11 @@ export default function Card({ posts, onPostDelete }: any) {
           source={require('../../assets/images/no_image.png')}
           style={{ width: 150, height: 150, marginBottom: 12 }}
         />
-        <BoldText style={CardStyles.edit}>EDIT</BoldText>
+        {isEdit && (
+          <Pressable onPress={() => onPostEdit(posts)}>
+            <BoldText style={CardStyles.edit}>EDIT</BoldText>
+          </Pressable>
+        )}
       </View>
 
       <View style={{ position: 'relative' }}>
@@ -119,12 +128,16 @@ export default function Card({ posts, onPostDelete }: any) {
             </View>
           </View>
 
-          <Pressable onPress={() => setIsMenuOpened(menu => !menu)}>
-            <Icon name="close" size={32} color="red" />
-          </Pressable>
-          <View style={CardStyles.dropdownPosition}>
-            {isMenuOpened && renderDropdown()}
-          </View>
+          {isEdit && (
+            <View>
+              <Pressable onPress={() => setIsMenuOpened(menu => !menu)}>
+                <Icon name="close" size={32} color="red" />
+              </Pressable>
+              <View style={CardStyles.dropdownPosition}>
+                {isMenuOpened && renderDropdown()}
+              </View>
+            </View>
+          )}
         </View>
 
         <View style={{ marginTop: 24 }}>
@@ -134,7 +147,7 @@ export default function Card({ posts, onPostDelete }: any) {
           </View>
           <View style={CardStyles.details}>
             <NormalText style={CardStyles.detailText}>Connection:</NormalText>
-            <BoldText>{posts.networks[0].name}</BoldText>
+            <BoldText>{posts.networks[0]?.name}</BoldText>
           </View>
           <View>
             <NormalText style={{ textDecorationLine: 'underline' }}>
@@ -143,15 +156,17 @@ export default function Card({ posts, onPostDelete }: any) {
           </View>
         </View>
 
-        <View style={CardStyles.share}>
-          <NormalText style={CardStyles.text}>Share on:</NormalText>
-          <Pressable onPress={shareOnWhatsapp}>
-            <Icon name="logo-whatsapp" size={32} color="green" />
-          </Pressable>
-          <Pressable onPress={shareOnMail}>
-            <Icon name="mail" size={32} style={{ marginLeft: 8 }} />
-          </Pressable>
-        </View>
+        {isEdit && (
+          <View style={CardStyles.share}>
+            <NormalText style={CardStyles.text}>Share on:</NormalText>
+            <Pressable onPress={shareOnWhatsapp}>
+              <Icon name="logo-whatsapp" size={32} color="green" />
+            </Pressable>
+            <Pressable onPress={shareOnMail}>
+              <Icon name="mail" size={32} style={{ marginLeft: 8 }} />
+            </Pressable>
+          </View>
+        )}
       </View>
     </View>
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 import { launchCamera } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { CreatePost } from '../../../api/feeds';
+import { CreatePost, UpdatePost } from '../../../api/feeds';
 import { GetNetworkList } from '../../../api/network';
 import { UploadMedia } from '../../../api/user';
 import PrimaryButton from '../../../components/Button/PrimaryButton';
@@ -21,8 +21,8 @@ import {
 interface ListingInfoProps {
   heading: string;
   price: string;
-  details: string;
-  network: string[];
+  details?: string;
+  networks: any[];
   freeGiveAway: boolean;
 }
 export declare type MediaType = 'photo' | 'video' | 'mixed';
@@ -39,12 +39,14 @@ export declare type PhotoQuality =
   | 0.9
   | 1;
 
-export default function CreateListings({ navigation }: any) {
+export default function CreateListings({ navigation, route }: any) {
+  const { listDetails } = route.params;
+
   const [listingInfo, setListingInfo] = useState<ListingInfoProps>({
     heading: '',
     price: '',
     details: '',
-    network: [''],
+    networks: [''],
     freeGiveAway: false,
   });
   const [photoInfo, setPhotoInfo] = useState('');
@@ -58,10 +60,35 @@ export default function CreateListings({ navigation }: any) {
   ]);
 
   useEffect(() => {
-    getNetowrkDetails();
+    getNetworkDetails();
+    Object.keys(listDetails).length ? populateInfo() : null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getNetowrkDetails = async () => {
+  const updateNetworkDetails = (listInfo: any) => {
+    if (Object.keys(listDetails).length) {
+      const dummyList = [...listInfo];
+      dummyList.map(list => {
+        if (list._id === listDetails.networks[0]._id) {
+          list.selected = true;
+        }
+      });
+      setNetworkList(dummyList);
+    }
+  };
+
+  const populateInfo = () => {
+    let details = {
+      heading: listDetails.title,
+      price: listDetails.price.toString(),
+      details: listDetails?.details || '',
+      networks: [listDetails.networks[0]._id],
+      freeGiveAway: listDetails.freeGiveAway,
+    };
+    setListingInfo(details);
+  };
+
+  const getNetworkDetails = async () => {
     const { data } = await GetNetworkList();
     if (data) {
       let list: any = [];
@@ -69,6 +96,7 @@ export default function CreateListings({ navigation }: any) {
         list.push({ ...network, selected: false });
       });
       setNetworkList(list);
+      updateNetworkDetails(list);
     } else {
       Snackbar({
         type: 'error',
@@ -90,22 +118,30 @@ export default function CreateListings({ navigation }: any) {
         : { ...isSelectedItem, selected: false },
     );
     setNetworkList(updatedState);
-    listInfo = { ...listInfo, network: [item._id] };
+    listInfo = { ...listInfo, networks: [item._id] };
     setListingInfo(listInfo);
   };
 
   const publishNewPost = async (isPublish = false) => {
-    if (!listingInfo.network.length) {
+    if (listingInfo.networks[0] === '') {
       Snackbar({
         type: 'error',
-        message: 'choose network where you want to show  ',
-        message2: 'your post',
+        message: 'choose network where you want to show your post',
       });
       return;
     }
-    const requestBody: CreatePostBody = {
+
+    if (listingInfo.details === '') {
+      Snackbar({
+        type: 'error',
+        message: 'Please provide details of post ',
+      });
+      return;
+    }
+
+    let requestBody: CreatePostBody = {
       title: listingInfo.heading,
-      networks: listingInfo.network,
+      networks: [listingInfo.networks[0]],
       price: listingInfo.price,
       freeGiveAway: listingInfo.freeGiveAway,
       images: [
@@ -114,9 +150,18 @@ export default function CreateListings({ navigation }: any) {
       details: listingInfo.details,
       published: true,
     };
+
+    if (listDetails) {
+      requestBody._id = listDetails._id;
+    }
     !isPublish ? delete requestBody?.published : null;
 
-    const data = await CreatePost(requestBody);
+    const request = listDetails
+      ? UpdatePost(requestBody)
+      : CreatePost(requestBody);
+
+    const { data, err } = await request;
+
     if (data) {
       Snackbar({
         type: 'success',
@@ -126,7 +171,7 @@ export default function CreateListings({ navigation }: any) {
     } else {
       Snackbar({
         type: 'error',
-        message: 'unable to fetch network list',
+        message: err,
         position: 'bottom',
       });
     }
@@ -178,8 +223,8 @@ export default function CreateListings({ navigation }: any) {
           showsVerticalScrollIndicator={true}>
           {networkList.length ? (
             <View style={CreateListingStyle.list}>
-              {networkList.map((item, index) => (
-                <View key={index}>
+              {networkList.map(item => (
+                <View key={item._id}>
                   <RadioButton
                     onPress={() => onRadioBtnClick(item)}
                     selected={item.selected}
@@ -274,7 +319,7 @@ export default function CreateListings({ navigation }: any) {
             <PrimaryInput
               onChangeText={text => updateDetails(text, 'details')}
               placeholder={'Details'}
-              value={listingInfo.details}
+              value={listingInfo.details || ''}
             />
           </View>
         </View>

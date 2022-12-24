@@ -80,7 +80,11 @@ export const UploadMedia = async (imageFile: any) => {
   const token = await AsyncStorage.getItem(TOKEN);
 
   let bodyFormData = new FormData();
-  bodyFormData.append('file', imageFile);
+  bodyFormData.append('file', {
+    uri: imageFile.uri,
+    type: imageFile.type,
+    name: imageFile.fileName,
+  });
 
   const request = await axios
     .post(`${BASE_URL}/media`, bodyFormData, {
@@ -90,7 +94,6 @@ export const UploadMedia = async (imageFile: any) => {
       },
     })
     .then(res => {
-      console.log(res, 'ghg');
       if (res.status == 200) {
         return { data: res.data, error: null };
       } else {
