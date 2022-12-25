@@ -84,6 +84,7 @@ export const UpdatePost = async (body: any) => {
       return { data: false, err: res.data.error };
     })
     .catch(err => {
+      console.log(err.response?.data.error);
       return { data: false, err: err.response?.data.error };
     });
 

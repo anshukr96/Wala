@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { DeleteNetwork } from '../../api/network';
+import { UpdateNetwork } from '../../api/network';
 import { GetUserDetails } from '../../api/user';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import BoldText from '../../components/Text/BoldText';
@@ -30,6 +30,15 @@ export default function MyProfile({ navigation }: any) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getUserInfo();
+    });
+
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation]);
+
   const getUserInfo = async () => {
     const userID = await AsyncStorage.getItem(USERID);
     const { data } = await GetUserDetails(userID || '');
@@ -45,19 +54,24 @@ export default function MyProfile({ navigation }: any) {
   };
 
   const onDelete = async () => {
-    const { message, error } = await DeleteNetwork(selectedNetwork);
-    if (message) {
+    const saveNetwork = profileInfo.networks?.filter(
+      network => network._id !== selectedNetwork,
+    );
+
+    const requestBody = { networks: saveNetwork };
+    const { data } = await UpdateNetwork(requestBody);
+    if (data) {
       Snackbar({
         type: 'success',
-        message: message,
+        message: data,
       });
-      setIsDeletePopup(true);
+      setIsDeletePopup(false);
       setSelectedNetwork('');
-      navigation.goBack();
+      getUserInfo();
     } else {
       Snackbar({
         type: 'error',
-        message: error ? error : '',
+        message: 'Unable to delete the network',
       });
     }
   };
@@ -137,9 +151,18 @@ export default function MyProfile({ navigation }: any) {
       <ProfileHeader />
 
       <View style={ProfileStyles.profile}>
-        <View style={ProfileStyles.upload}>
-          <Icon name={'person-circle-outline'} size={150} color={'black'} />
-        </View>
+        <Pressable style={ProfileStyles.upload}>
+          {profileInfo.profileImage !== '' ? (
+            <Image
+              source={{
+                uri: profileInfo.profileImage,
+              }}
+              style={{ width: 120, height: 120 }}
+            />
+          ) : (
+            <Icon name={'person-circle-outline'} size={150} color={'black'} />
+          )}
+        </Pressable>
 
         <View style={ProfileStyles.info}>
           <View style={ProfileStyles.details}>

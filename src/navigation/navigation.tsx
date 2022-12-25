@@ -22,6 +22,8 @@ export interface AuthContextInterface {
   signUp: (data: any) => Promise<void>;
 }
 
+declare const global: any;
+
 /* to see network call on debugging */
 if (__DEV__) {
   global.XMLHttpRequest = global.originalXMLHttpRequest

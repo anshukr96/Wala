@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { Pressable, View } from 'react-native';
-import { CameraOptions, launchCamera } from 'react-native-image-picker';
+import { Image, Pressable, View } from 'react-native';
+import {
+  CameraOptions,
+  launchCamera,
+  MediaType,
+  PhotoQuality,
+} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { UpdateUserDetails } from '../../api/user';
+import { UpdateUserDetails, UploadMedia } from '../../api/user';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import PrimaryInput from '../../components/Input';
 import BoldText from '../../components/Text/BoldText';
@@ -11,11 +16,10 @@ import Snackbar from '../../utils/Toast';
 import ProfileStyles from './MyProfile.styles';
 
 export const cameraOptions: CameraOptions = {
-  mediaType: 'photo',
   maxWidth: 250,
   maxHeight: 250,
-  quality: 0.7,
-  includeBase64: true,
+  quality: 0.7 as PhotoQuality,
+  mediaType: 'photo' as MediaType,
 };
 
 export default function EditProfile({ route, navigation }: any) {
@@ -39,12 +43,13 @@ export default function EditProfile({ route, navigation }: any) {
     };
 
     const { data, error } = await UpdateUserDetails(requestbody);
+
     if (data) {
       Snackbar({
         message: data,
         type: 'success',
       });
-      navigation.goBack();
+      navigation.navigate('MyProfile');
     } else {
       Snackbar({
         message: error,
@@ -54,7 +59,20 @@ export default function EditProfile({ route, navigation }: any) {
   };
 
   const uploadPhoto = async () => {
-    const result = await launchCamera(cameraOptions);
+    const { assets } = await launchCamera(cameraOptions);
+    if (assets?.length) {
+      const { data } = await UploadMedia(assets[0]);
+      if (data) {
+        let info = { ...profileInfo };
+        info = { ...info, profileImage: data };
+        setProfileInfo(info);
+      } else {
+        Snackbar({
+          type: 'error',
+          message: 'Unable to upload image',
+        });
+      }
+    }
   };
 
   const ProfileHeader = () => {
@@ -82,7 +100,16 @@ export default function EditProfile({ route, navigation }: any) {
 
       <View style={ProfileStyles.profile}>
         <Pressable onPress={uploadPhoto} style={ProfileStyles.upload}>
-          <Icon name={'person-circle-outline'} size={150} color={'black'} />
+          {profileInfo.profileImage !== '' ? (
+            <Image
+              source={{
+                uri: profileInfo.profileImage,
+              }}
+              style={{ width: 120, height: 120 }}
+            />
+          ) : (
+            <Icon name={'person-circle-outline'} size={150} color={'black'} />
+          )}
         </Pressable>
 
         <View style={ProfileStyles.info}>

@@ -107,10 +107,19 @@ export default function Card({
   return (
     <View style={CardStyles.container}>
       <View style={CardStyles.img}>
-        <Image
-          source={require('../../assets/images/no_image.png')}
-          style={{ width: 150, height: 150, marginBottom: 12 }}
-        />
+        {posts.images[0] !== '' ? (
+          <Image
+            source={{
+              uri: posts.images[0],
+            }}
+            style={{ width: 120, height: 120 }}
+          />
+        ) : (
+          <Image
+            source={require('../../assets/images/upload.png')}
+            style={{ width: 150, height: 150, marginBottom: 12 }}
+          />
+        )}
         {isEdit && (
           <Pressable onPress={() => onPostEdit(posts)}>
             <BoldText style={CardStyles.edit}>EDIT</BoldText>

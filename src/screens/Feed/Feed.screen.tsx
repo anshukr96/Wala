@@ -1,6 +1,13 @@
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StatusBar, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StatusBar,
+  Text,
+  View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { GetPostsList } from '../../api/feeds';
 import PrimaryButton from '../../components/Button/PrimaryButton';
@@ -19,15 +26,25 @@ interface FeedHeaderProps {
 
 const Feed = ({ navigation }: Props) => {
   const [feedList, setFeedList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchPostList();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchPostList();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const fetchPostList = async () => {
     const { data } = await GetPostsList();
     if (data) {
       setFeedList(data);
+      setLoading(false);
     } else {
       Snackbar({
         type: 'error',
@@ -78,6 +95,14 @@ const Feed = ({ navigation }: Props) => {
       );
     }
   };
+
+  if (loading) {
+    return (
+      <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <>

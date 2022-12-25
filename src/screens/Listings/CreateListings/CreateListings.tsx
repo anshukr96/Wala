@@ -10,9 +10,9 @@ import SecondaryButton from '../../../components/Button/SecondaryButton';
 import PrimaryInput from '../../../components/Input';
 import RadioButton from '../../../components/Radio/Radio';
 import NormalText from '../../../components/Text/NormalText';
-import { CreatePostBody } from '../../../types/feed/feed';
 import { OptionProps } from '../../../utils/constants';
 import Snackbar from '../../../utils/Toast';
+import { cameraOptions } from '../../MyProfile/EditProfile.screen';
 import {
   default as CreateListingsStyles,
   default as CreateListingStyle,
@@ -61,7 +61,7 @@ export default function CreateListings({ navigation, route }: any) {
 
   useEffect(() => {
     getNetworkDetails();
-    Object.keys(listDetails).length ? populateInfo() : null;
+    listDetails && Object.keys(listDetails).length ? populateInfo() : null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -86,6 +86,7 @@ export default function CreateListings({ navigation, route }: any) {
       freeGiveAway: listDetails.freeGiveAway,
     };
     setListingInfo(details);
+    setPhotoInfo(listDetails.images[0]);
   };
 
   const getNetworkDetails = async () => {
@@ -122,6 +123,34 @@ export default function CreateListings({ navigation, route }: any) {
     setListingInfo(listInfo);
   };
 
+  const createRequestBody = (isUpdatePost: boolean) => {
+    const body = isUpdatePost
+      ? {
+          query: {
+            _id: listDetails._id,
+          },
+          payload: {
+            title: listingInfo.heading,
+            networks: listingInfo.networks,
+            price: listingInfo.price,
+            freeGiveAway: listingInfo.freeGiveAway,
+            images: [photoInfo],
+            details: listingInfo.details,
+            published: true,
+          },
+        }
+      : {
+          title: listingInfo.heading,
+          networks: listingInfo.networks,
+          price: listingInfo.price,
+          freeGiveAway: listingInfo.freeGiveAway,
+          images: [photoInfo],
+          details: listingInfo.details,
+          published: true,
+        };
+    return body;
+  };
+
   const publishNewPost = async (isPublish = false) => {
     if (listingInfo.networks[0] === '') {
       Snackbar({
@@ -139,21 +168,10 @@ export default function CreateListings({ navigation, route }: any) {
       return;
     }
 
-    let requestBody: CreatePostBody = {
-      title: listingInfo.heading,
-      networks: [listingInfo.networks[0]],
-      price: listingInfo.price,
-      freeGiveAway: listingInfo.freeGiveAway,
-      images: [
-        'https://cdn.pixabay.com/photo/2014/02/27/16/10/flowers-276014__480.jpg',
-      ],
-      details: listingInfo.details,
-      published: true,
-    };
+    let requestBody = listDetails
+      ? createRequestBody(true)
+      : createRequestBody(false);
 
-    if (listDetails) {
-      requestBody._id = listDetails._id;
-    }
     !isPublish ? delete requestBody?.published : null;
 
     const request = listDetails
@@ -178,12 +196,6 @@ export default function CreateListings({ navigation, route }: any) {
   };
 
   const uploadPhoto = async () => {
-    const cameraOptions = {
-      maxWidth: 250,
-      maxHeight: 250,
-      quality: 0.7 as PhotoQuality,
-      mediaType: 'photo' as MediaType,
-    };
     const { assets } = await launchCamera(cameraOptions);
     if (assets?.length) {
       const { data } = await UploadMedia(assets[0]);

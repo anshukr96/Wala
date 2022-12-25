@@ -1,6 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Image, Pressable, ScrollView, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { GetExistingPosts } from '../../../api/feeds';
 import Card from '../../../components/Card/Card';
@@ -13,6 +19,7 @@ import ExisitngListingsStyles from './ExistingListings.styles';
 
 export default function ExistingListings({ navigation }: any) {
   const [postList, setPostList] = useState<PostBody[] | []>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchExistingsPost();
@@ -23,6 +30,7 @@ export default function ExistingListings({ navigation }: any) {
     const { data, err } = await GetExistingPosts(userId || '');
     if (data) {
       setPostList(data);
+      setLoading(false);
     } else {
       Snackbar({
         type: 'error',
@@ -69,13 +77,21 @@ export default function ExistingListings({ navigation }: any) {
     );
   };
 
+  if (loading) {
+    return (
+      <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
     <View>
       <ListingsHeader />
 
       <Pressable
         onPress={() =>
-          navigation.navigate('CreateListings', { listDetails: {} })
+          navigation.navigate('CreateListings', { listDetails: null })
         }>
         <View style={ExisitngListingsStyles.newlist}>
           <Image

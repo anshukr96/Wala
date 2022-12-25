@@ -1,9 +1,5 @@
 import $axios from '../lib/axios';
-import {
-  AddNetworkBody,
-  CreateNetworkBody,
-  UpdateNetworkBody,
-} from '../types/auth/auth';
+import { AddNetworkBody, CreateNetworkBody } from '../types/auth/auth';
 import { BASE_URL } from '../utils/constants';
 
 /**
@@ -54,15 +50,19 @@ export const CreateNetwork = async (requestBody: CreateNetworkBody) => {
  * @returns
  */
 
-export const UpdateNetwork = async (requestBody: UpdateNetworkBody) => {
+export const UpdateNetwork = async (requestBody: any) => {
   const request = await $axios
-    .patch(`${BASE_URL}/network`, requestBody)
-    .then(res => res)
-    .catch(err => {
-      if (err.response) {
-        return err.response.data;
+    .patch(`${BASE_URL}/user`, requestBody)
+    .then(res => {
+      if (res.status == 200) {
+        console.log(requestBody, 'body');
+        return { data: 'You are no longer part of this network', error: null };
+      } else {
+        return { data: null, error: res.data.data };
       }
-      return err;
+    })
+    .catch(err => {
+      return { error: err.response.data, data: null };
     });
 
   return request;

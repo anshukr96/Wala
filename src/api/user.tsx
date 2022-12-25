@@ -95,13 +95,13 @@ export const UploadMedia = async (imageFile: any) => {
     })
     .then(res => {
       if (res.status == 200) {
-        return { data: res.data, error: null };
+        return { data: res.data.data, error: null };
       } else {
         return { data: null, error: null };
       }
     })
     .catch(_ => {
-      return { data: null, error: _ };
+      return { data: null, error: _.response.data.error };
     });
 
   return request;
