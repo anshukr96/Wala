@@ -127,7 +127,11 @@ export default function Card({
         )}
       </View>
 
-      <View style={{ position: 'relative' }}>
+      <View
+        style={{
+          position: 'relative',
+          marginLeft: 16,
+        }}>
         <View style={CardStyles.header}>
           <View>
             <BoldText>{posts.title}</BoldText>

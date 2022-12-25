@@ -62,14 +62,16 @@ export default function ExistingListings({ navigation }: any) {
         persistentScrollbar={true}
         showsVerticalScrollIndicator={true}>
         <View>
-          {postList.map(post => {
+          {postList.map((post, index) => {
             return (
-              <Card
-                posts={post}
-                onPostDelete={fetchExistingsPost}
-                onPostEdit={onEditPost}
-                isEdit={true}
-              />
+              <View key={index}>
+                <Card
+                  posts={post}
+                  onPostDelete={fetchExistingsPost}
+                  onPostEdit={onEditPost}
+                  isEdit={true}
+                />
+              </View>
             );
           })}
         </View>

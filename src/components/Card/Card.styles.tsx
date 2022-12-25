@@ -3,10 +3,14 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   container: {
     flexDirection: 'row',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#D3D3D3',
     padding: 8,
     margin: 16,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    elevation: 20,
+    shadowColor: '#90EE90',
   },
   share: {
     flexDirection: 'row',

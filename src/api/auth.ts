@@ -53,3 +53,29 @@ export const verifyOTP = async (body: verifyOTPBody) => {
 
   return request;
 };
+
+/**
+ * verify OTP
+ * @returns
+ */
+
+export const SignOut = async () => {
+  const request = await $axios
+    .delete(`${BASE_URL}/user/signOut`)
+    .then(res => {
+      if (res.status == 204) {
+        return { data: true, error: null };
+      } else {
+        return { data: false, error: res.data.error };
+      }
+    })
+    .catch(err => {
+      console.log(err.response.data.error);
+      if (err.response) {
+        return { data: false, error: err.response.data.error };
+      }
+      return err;
+    });
+
+  return request;
+};

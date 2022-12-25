@@ -83,9 +83,9 @@ const Feed = ({ navigation }: Props) => {
           persistentScrollbar={true}
           showsVerticalScrollIndicator={true}>
           <View>
-            {feedList.map(post => {
+            {feedList.map((post, index) => {
               return (
-                <View>
+                <View key={index}>
                   <Card posts={post} />
                 </View>
               );
