@@ -51,6 +51,7 @@ const Feed = ({ navigation }: Props) => {
         message: 'unable to fetch network list',
         position: 'bottom',
       });
+      setLoading(false);
     }
   };
 

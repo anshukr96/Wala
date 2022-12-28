@@ -3,9 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { SignOut } from '../../api/auth';
 import OutlineButton from '../../components/Button/OutlineButton';
 import SecondaryButton from '../../components/Button/SecondaryButton';
+import { AuthContext, AuthContextInterface } from '../../navigation/navigation';
 import Snackbar from '../../utils/Toast';
 
 export default function Signout({ navigation }: any) {
+  const { signOut } = React.useContext(AuthContext) as AuthContextInterface;
+
   const onSignout = async () => {
     const { data } = await SignOut();
 
@@ -14,7 +17,7 @@ export default function Signout({ navigation }: any) {
         type: 'success',
         message: 'User sign out successfully',
       });
-      navigation.navigate('Listing');
+      signOut();
     } else {
       Snackbar({
         type: 'error',

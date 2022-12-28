@@ -24,7 +24,7 @@ export interface AuthContextInterface {
 
 declare const global: any;
 
-/* to see network call on debugging */
+// /* to see network call on debugging */
 if (__DEV__) {
   global.XMLHttpRequest = global.originalXMLHttpRequest
     ? global.originalXMLHttpRequest
@@ -85,10 +85,7 @@ const MainNavigation = () => {
           position: 'bottom',
         });
       }
-
       requestInterceptor();
-
-      console.log(id);
 
       dispatch({ type: 'RESTORE_TOKEN', token: userToken, id: id });
     };
@@ -111,8 +108,13 @@ const MainNavigation = () => {
           token: data.token,
           userId: data.id,
         });
+        console.log(data, 'datatoken');
       },
-      signOut: () => dispatch({ type: 'SIGN_OUT' }),
+      signOut: () => {
+        AsyncStorage.removeItem(USERID);
+        AsyncStorage.removeItem(TOKEN);
+        dispatch({ type: 'SIGN_OUT' });
+      },
       signUp: async (data: any) => {
         dispatch({ type: 'SIGN_IN', token: data.token });
       },

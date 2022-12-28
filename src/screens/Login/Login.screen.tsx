@@ -22,8 +22,9 @@ export default function Login({ navigation }: Props) {
   const { signIn } = React.useContext(AuthContext) as AuthContextInterface;
 
   const sendPhoneOTP = async () => {
-    const isOTPSend = await sendOTP({ phoneNumber: `+91${phoneNumber}` });
-    if (isOTPSend) {
+    const { data, error } = await sendOTP({ phoneNumber: `+91${phoneNumber}` });
+
+    if (data) {
       setIsOTP(true);
       Snackbar({
         type: 'success',
@@ -33,7 +34,7 @@ export default function Login({ navigation }: Props) {
     } else {
       Snackbar({
         type: 'error',
-        message: 'Invalid Phone number',
+        message: error,
         position: 'bottom',
       });
     }
@@ -55,7 +56,7 @@ export default function Login({ navigation }: Props) {
     };
     const { data, error } = await verifyOTP(body);
     if (data) {
-      signIn({ token: data.token });
+      signIn(data);
     } else {
       Snackbar({ type: 'error', message: error, position: 'bottom' });
     }

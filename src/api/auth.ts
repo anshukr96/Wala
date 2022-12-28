@@ -8,22 +8,25 @@ import { BASE_URL } from '../utils/constants';
  * @returns
  */
 
-export const sendOTP = async (body: SendOTPBody): Promise<boolean> => {
+export const sendOTP = async (body: SendOTPBody) => {
   const request = await $axios
-    .post(`${BASE_URL}/user/sendOtp`, body)
+    .post('http://35.154.18.227/api/v1/user/sendOtp', body)
     .then(res => {
       if (res.status == 200) {
-        return true;
+        return { data: true, error: null };
       } else {
-        return false;
+        return { data: false, error: res.data.error };
       }
     })
     .catch(err => {
+      console.log(JSON.stringify(err), 'axioserror');
       if (err.response) {
-        return { data: null, error: err.response.data.error };
+        return { data: false, error: err.response.data.error };
       }
       return err;
     });
+
+  console.log($axios, 'anshu');
 
   return request;
 };
@@ -70,7 +73,6 @@ export const SignOut = async () => {
       }
     })
     .catch(err => {
-      console.log(err.response.data.error);
       if (err.response) {
         return { data: false, error: err.response.data.error };
       }

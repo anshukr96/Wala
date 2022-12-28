@@ -17,9 +17,10 @@ export const GetUserDetails = async (id: string) => {
       return { data: res.data.data, error: null };
     })
     .catch(err => {
-      console.log(err);
       return { error: err.response.data, data: null };
     });
+
+  console.log(request, 'requestinfo');
 
   return request;
 };

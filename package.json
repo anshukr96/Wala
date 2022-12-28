@@ -11,7 +11,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "pod-clean": "cd ios && rm -rf Pods && pod cache clean --all && pod install && cd ..",
     "gradle-clean": "cd android &&./gradlew clean && cd ../",
-    "postinstall": "rndebugger-open"
+    "postinstall": "rndebugger-open",
+    "release:apk": "cd android && ./gradlew clean && ./gradlew assembleRelease && cd .."
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.11",
