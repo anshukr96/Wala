@@ -22,6 +22,13 @@ export default function Login({ navigation }: Props) {
   const { signIn } = React.useContext(AuthContext) as AuthContextInterface;
 
   const sendPhoneOTP = async () => {
+    if (phoneNumber.length !== 10) {
+      Snackbar({
+        type: 'error',
+        message: 'Please enter a valid phone number',
+      });
+      return;
+    }
     const { data, error } = await sendOTP({ phoneNumber: `+91${phoneNumber}` });
 
     if (data) {
@@ -89,12 +96,14 @@ export default function Login({ navigation }: Props) {
             placeholder={!isOTP ? '10 digits...' : 'Enter 4 digit OTP'}
             value={!isOTP ? phoneNumber : otp}
             maxLength={isOTP ? 4 : 10}
+            keyboardType="number-pad"
           />
 
           <View style={{ width: '94%', marginLeft: 12, marginVertical: 8 }}>
             <PrimaryButton
               title={isOTP ? 'VERIFY OTP' : 'SEND OTP'}
               onPress={isOTP ? verifyPhoneOTP : sendPhoneOTP}
+              disabled={!isOTP && phoneNumber.length < 10}
             />
           </View>
         </View>

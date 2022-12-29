@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import { KeyboardTypeOptions, StyleSheet, TextInput } from 'react-native';
 
 interface PrimaryInputProps {
   value: string;
@@ -7,6 +7,8 @@ interface PrimaryInputProps {
   placeholder?: string;
   maxLength?: number;
   style?: Record<string, string | number>;
+  keyboardType?: KeyboardTypeOptions | undefined;
+  editable?: boolean;
 }
 
 export default function PrimaryInput({
@@ -14,6 +16,8 @@ export default function PrimaryInput({
   onChangeText,
   placeholder,
   maxLength,
+  keyboardType,
+  editable = true,
   style,
 }: PrimaryInputProps) {
   return (
@@ -23,6 +27,8 @@ export default function PrimaryInput({
       placeholder={placeholder || ''}
       value={value}
       maxLength={maxLength}
+      keyboardType={keyboardType}
+      editable={editable}
       placeholderTextColor="#454545"
     />
   );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, TextInput, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SaveFeedback } from '../../api/user';
 import PrimaryButton from '../../components/Button/PrimaryButton';
@@ -67,36 +67,41 @@ export default function Feedback({ navigation }: any) {
   };
 
   return (
-    <View style={FeedbackStyles.container}>
-      <FeedbackHeader />
+    <ScrollView
+      contentContainerStyle={FeedbackStyles.scrollContainer}
+      persistentScrollbar={true}
+      showsVerticalScrollIndicator={true}>
+      <View style={FeedbackStyles.container}>
+        <FeedbackHeader />
 
-      <View style={{ marginVertical: 16 }}>
-        <SemiBoldText>Choose one:</SemiBoldText>
+        <View style={{ marginVertical: 16 }}>
+          <SemiBoldText>Choose one:</SemiBoldText>
 
-        {options.map(item => (
-          <View style={FeedbackStyles.options}>
-            <RadioButton
-              onPress={() => onRadioBtnClick(item)}
-              selected={item.selected}
-              key={item._id}>
-              {item.name}
-            </RadioButton>
+          {options.map(item => (
+            <View style={FeedbackStyles.options}>
+              <RadioButton
+                onPress={() => onRadioBtnClick(item)}
+                selected={item.selected}
+                key={item._id}>
+                {item.name}
+              </RadioButton>
+            </View>
+          ))}
+        </View>
+
+        <View>
+          <TextInput
+            placeholder="Please type your message here"
+            style={FeedbackStyles.input}
+            multiline
+            onChangeText={text => setFeedback(text)}
+          />
+
+          <View style={FeedbackStyles.cta}>
+            <PrimaryButton title="SUBMIT" onPress={sendFeedback} />
           </View>
-        ))}
-      </View>
-
-      <View>
-        <TextInput
-          placeholder="Please type your message here"
-          style={FeedbackStyles.input}
-          multiline
-          onChangeText={text => setFeedback(text)}
-        />
-
-        <View style={FeedbackStyles.cta}>
-          <PrimaryButton title="SUBMIT" onPress={sendFeedback} />
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }

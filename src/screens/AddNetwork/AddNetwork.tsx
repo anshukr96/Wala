@@ -251,12 +251,14 @@ export default function AddNetwork({ navigation }: Props) {
             </View>
           </View>
 
-          <View style={styles.netWarning}>
+          <Pressable
+            style={styles.netWarning}
+            onPress={() => navigation.navigate('Feedback')}>
             <Text style={styles.netWarningText}>Can't find your network?</Text>
             <Text style={styles.netWarningText}>
               Submit a request to add a new network
             </Text>
-          </View>
+          </Pressable>
 
           {isSubmitted && showAfterNetworkAdded()}
           {isNoNetworkAdded && noNetworkAdded()}

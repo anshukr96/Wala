@@ -53,6 +53,7 @@ export default StyleSheet.create({
     padding: 16,
     width: 220,
     borderRadius: 8,
+    boxShadow: '5px 5px 20px red',
   },
   dropdownCTA: {
     flexDirection: 'row',

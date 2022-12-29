@@ -108,7 +108,6 @@ const MainNavigation = () => {
           token: data.token,
           userId: data.id,
         });
-        console.log(data, 'datatoken');
       },
       signOut: () => {
         AsyncStorage.removeItem(USERID);

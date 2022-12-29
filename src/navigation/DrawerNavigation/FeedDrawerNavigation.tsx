@@ -12,16 +12,16 @@ import MyProfile from '../../screens/MyProfile/MyProfile.screen';
 import Signout from '../../screens/SignOut/Signout';
 
 export type DrawerParamList = {
-  ['My Listing']: undefined;
-  MyProfile: undefined;
+  Home: undefined;
+  ['My Profile']: undefined;
   AddNetwork: undefined;
   FAQ: undefined;
   Feedback: undefined;
-  SignOut: undefined;
+  ['Sign Out']: undefined;
 };
 
 export type StackParamList = {
-  Listing: undefined;
+  ['My Listing']: undefined;
   AddNetwork: undefined;
   CreateListings: undefined;
   ExistingListing: undefined;
@@ -34,7 +34,7 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const FeedStackScreen = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Listing" component={Feed} />
+      <Stack.Screen name="My Listing" component={Feed} />
       <Stack.Screen name="AddNetwork" component={AddNetwork} />
       <Stack.Screen name="CreateListings" component={CreateListings} />
       <Stack.Screen name="ExistingListing" component={ExistingListings} />
@@ -53,11 +53,11 @@ const FeedDrawerMenu = () => {
           backgroundColor: '#90EE90',
         },
       }}>
-      <Drawer.Screen name="My Listing" component={FeedStackScreen} />
-      <Drawer.Screen name="MyProfile" component={MyProfile} />
+      <Drawer.Screen name="Home" component={FeedStackScreen} />
+      <Drawer.Screen name="My Profile" component={MyProfile} />
       <Drawer.Screen name="FAQ" component={FAQ} />
       <Drawer.Screen name="Feedback" component={Feedback} />
-      <Drawer.Screen name="SignOut" component={Signout} />
+      <Drawer.Screen name="Sign Out" component={Signout} />
     </Drawer.Navigator>
   );
 };

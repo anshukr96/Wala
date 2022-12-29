@@ -17,7 +17,7 @@ import { StackParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavi
 import Snackbar from '../../utils/Toast';
 import FeedStyles from './Feed.style';
 
-type Props = DrawerScreenProps<StackParamList, 'Listing'>;
+type Props = DrawerScreenProps<StackParamList, 'My Listing'>;
 
 interface FeedHeaderProps {
   onMenuToggle: () => void;

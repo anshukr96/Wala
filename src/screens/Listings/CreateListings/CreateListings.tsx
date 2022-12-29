@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
-import { launchCamera } from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { CreatePost, UpdatePost } from '../../../api/feeds';
 import { GetNetworkList } from '../../../api/network';
@@ -148,22 +148,18 @@ export default function CreateListings({ navigation, route }: any) {
           details: listingInfo.details,
           published: true,
         };
+
+    if (listingInfo.freeGiveAway) {
+      delete body.price;
+    }
     return body;
   };
 
   const publishNewPost = async (isPublish = false) => {
-    if (listingInfo.networks[0] === '') {
+    if (listingInfo.networks[0] === '' && isPublish) {
       Snackbar({
         type: 'error',
         message: 'choose network where you want to show your post',
-      });
-      return;
-    }
-
-    if (listingInfo.details === '') {
-      Snackbar({
-        type: 'error',
-        message: 'Please provide details of post ',
       });
       return;
     }
@@ -196,7 +192,7 @@ export default function CreateListings({ navigation, route }: any) {
   };
 
   const uploadPhoto = async () => {
-    const { assets } = await launchCamera(cameraOptions);
+    const { assets } = await launchImageLibrary(cameraOptions);
     if (assets?.length) {
       const { data } = await UploadMedia(assets[0]);
       if (data) {
@@ -225,10 +221,12 @@ export default function CreateListings({ navigation, route }: any) {
       <View style={CreateListingStyle.chooseNetwork}>
         <View style={CreateListingStyle.chooseHeader}>
           <NormalText>Choose Networks:</NormalText>
-          <Image
-            source={require('../../../assets/images/add.png')}
-            style={{ width: 24, height: 24 }}
-          />
+          <Pressable onPress={() => navigation.navigate('AddNetwork')}>
+            <Image
+              source={require('../../../assets/images/add.png')}
+              style={{ width: 24, height: 24 }}
+            />
+          </Pressable>
         </View>
         <ScrollView
           persistentScrollbar={true}
@@ -313,6 +311,7 @@ export default function CreateListings({ navigation, route }: any) {
               onChangeText={text => updateDetails(text, 'price')}
               placeholder={'Price'}
               value={listingInfo.price}
+              editable={!listingInfo.freeGiveAway}
               style={{ width: '30%' }}
             />
             <SecondaryButton

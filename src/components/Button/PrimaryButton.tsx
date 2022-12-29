@@ -5,16 +5,19 @@ interface PrimaryButtonProps {
   title: string;
   onPress: () => void;
   style?: Record<string, string>;
+  disabled?: boolean;
 }
 
 export default function PrimaryButton({
   title,
   onPress,
+  disabled = false,
   style,
 }: PrimaryButtonProps) {
   return (
     <Pressable
       style={style ? { ...styles.button, ...style } : { ...styles.button }}
+      disabled={disabled}
       onPress={onPress}>
       <Text style={styles.text}>{title}</Text>
     </Pressable>

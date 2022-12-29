@@ -94,30 +94,42 @@ export default function EditProfile({ route, navigation }: any) {
     );
   };
 
+  const onPhotoDelete = () => {
+    let info = { ...profileInfo };
+    info = { ...info, profileImage: '' };
+    setProfileInfo(info);
+  };
+
   return (
     <View style={ProfileStyles.container}>
       <ProfileHeader />
 
       <View style={ProfileStyles.profile}>
-        <Pressable onPress={uploadPhoto} style={ProfileStyles.upload}>
-          {profileInfo.profileImage !== '' ? (
-            <Image
-              source={{
-                uri: profileInfo.profileImage,
-              }}
-              style={{ width: 120, height: 120 }}
-            />
-          ) : (
-            <Icon name={'person-circle-outline'} size={150} color={'black'} />
-          )}
-        </Pressable>
+        <View>
+          <Pressable onPress={uploadPhoto} style={ProfileStyles.upload}>
+            {profileInfo.profileImage !== '' ? (
+              <Image
+                source={{
+                  uri: profileInfo.profileImage,
+                }}
+                style={{ width: 120, height: 120 }}
+              />
+            ) : (
+              <Icon name={'person-circle-outline'} size={150} color={'black'} />
+            )}
+          </Pressable>
+
+          <Pressable onPress={onPhotoDelete}>
+            <Icon name={'ios-trash-outline'} size={150} color={'black'} />
+          </Pressable>
+        </View>
 
         <View style={ProfileStyles.info}>
           <View style={ProfileStyles.details}>
             <BoldText>Name:</BoldText>
             <PrimaryInput
               onChangeText={text => updateDetails(text, 'username')}
-              placeholder={'Username'}
+              placeholder={'Pleae enter your name'}
               value={profileInfo.username}
               style={{ width: 250 }}
             />

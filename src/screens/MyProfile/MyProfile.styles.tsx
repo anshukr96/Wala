@@ -11,7 +11,7 @@ export default StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     marginTop: 24,
   },
   profile: {
@@ -19,11 +19,12 @@ export default StyleSheet.create({
   },
   info: {
     width: 150,
+    justifyContent: 'flex-start',
   },
   details: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginVertical: 12,
   },
   upload: {
