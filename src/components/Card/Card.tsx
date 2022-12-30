@@ -78,9 +78,9 @@ export default function Card({
       <View style={CardStyles.dropdownContainer}>
         <BoldText>REMOVE LISTING?</BoldText>
 
-        <View style={{ marginVertical: 16 }}>
+        <View style={{ marginTop: 8 }}>
           {options.map((item, index) => (
-            <View key={index}>
+            <View key={index} style={{ marginVertical: 4 }}>
               <RadioButton
                 onPress={() => onRadioBtnClick(item)}
                 selected={item.selected}
@@ -107,7 +107,7 @@ export default function Card({
   return (
     <View style={CardStyles.container}>
       <View style={CardStyles.img}>
-        {posts.images[0] !== '' ? (
+        {posts.images?.length ? (
           <Image
             source={{
               uri: posts.images[0],
@@ -116,7 +116,7 @@ export default function Card({
           />
         ) : (
           <Image
-            source={require('../../assets/images/upload.png')}
+            source={require('../../assets/images/no_image.png')}
             style={{ width: 150, height: 150, marginBottom: 12 }}
           />
         )}

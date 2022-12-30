@@ -7,7 +7,6 @@ import { GetUserDetails } from '../../api/user';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import BoldText from '../../components/Text/BoldText';
 import NormalText from '../../components/Text/NormalText';
-import SemiBoldText from '../../components/Text/SemiBoldText';
 import DeleteNetworkModal from '../../Modal/DeleteNetworkModal';
 import CreaterModal from '../../Modal/Modal';
 import { UserInfoBody } from '../../types/users/user';
@@ -167,7 +166,9 @@ export default function MyProfile({ navigation }: any) {
         <View style={ProfileStyles.info}>
           <View style={ProfileStyles.details}>
             <BoldText>Name:</BoldText>
-            <NormalText>{profileInfo.username}</NormalText>
+            <NormalText style={{ marginLeft: 14 }}>
+              {profileInfo.username}
+            </NormalText>
           </View>
 
           <View style={ProfileStyles.details}>
@@ -179,24 +180,26 @@ export default function MyProfile({ navigation }: any) {
         </View>
       </View>
 
-      <View style={ProfileStyles.list}>
-        <SemiBoldText>Active Networks:</SemiBoldText>
+      {profileInfo.networks?.length ? (
+        <View style={ProfileStyles.list}>
+          <BoldText>Active Networks:</BoldText>
 
-        <View style={ProfileStyles.header}>
-          <Text style={ProfileStyles.block}></Text>
-          <NormalText style={ProfileStyles.listname}>Verification</NormalText>
-          <Text style={ProfileStyles.block}></Text>
+          <View style={ProfileStyles.header}>
+            <Text style={ProfileStyles.block}></Text>
+            <BoldText style={ProfileStyles.listname}>Verification</BoldText>
+            <Text style={ProfileStyles.block}></Text>
+          </View>
+
+          {renderNetworkList()}
         </View>
+      ) : null}
 
-        {renderNetworkList()}
-
-        <View style={ProfileStyles.cta}>
-          <PrimaryButton
-            title="ADD NETWORK"
-            onPress={() => navigation.navigate('AddNetwork')}
-            style={ProfileStyles.button}
-          />
-        </View>
+      <View style={ProfileStyles.cta}>
+        <PrimaryButton
+          title="ADD NETWORK"
+          onPress={() => navigation.navigate('AddNetwork')}
+          style={ProfileStyles.button}
+        />
       </View>
 
       {isDeletePopup && showDeletePopup()}

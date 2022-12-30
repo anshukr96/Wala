@@ -17,14 +17,16 @@ export default StyleSheet.create({
   profile: {
     alignItems: 'stretch',
   },
+  profileContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   info: {
     width: 150,
-    justifyContent: 'flex-start',
   },
   details: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
     marginVertical: 12,
   },
   upload: {
@@ -35,14 +37,14 @@ export default StyleSheet.create({
   },
   listname: {
     fontSize: 14,
+    marginRight: 32,
   },
   cta: {
     marginVertical: 32,
     alignItems: 'center',
   },
   block: {
-    minWidth: 128,
-    marginRight: 64,
+    marginRight: 60,
   },
   button: {
     width: '64%',

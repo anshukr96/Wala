@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchCamera } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { CreatePost, UpdatePost } from '../../../api/feeds';
 import { GetNetworkList } from '../../../api/network';
 import { UploadMedia } from '../../../api/user';
 import PrimaryButton from '../../../components/Button/PrimaryButton';
 import SecondaryButton from '../../../components/Button/SecondaryButton';
+import CheckboxButton from '../../../components/checkbox/Checkbox';
 import PrimaryInput from '../../../components/Input';
-import RadioButton from '../../../components/Radio/Radio';
 import NormalText from '../../../components/Text/NormalText';
 import { OptionProps } from '../../../utils/constants';
 import Snackbar from '../../../utils/Toast';
@@ -49,7 +49,7 @@ export default function CreateListings({ navigation, route }: any) {
     networks: [''],
     freeGiveAway: false,
   });
-  const [photoInfo, setPhotoInfo] = useState('');
+  const [photoInfo, setPhotoInfo] = useState<string[]>([]);
   const [networkList, setNetworkList] = useState([
     {
       _id: '',
@@ -115,11 +115,15 @@ export default function CreateListings({ navigation, route }: any) {
     let listInfo = { ...listingInfo };
     let updatedState = networkList.map(isSelectedItem =>
       isSelectedItem._id === item._id
-        ? { ...isSelectedItem, selected: true }
-        : { ...isSelectedItem, selected: false },
+        ? { ...isSelectedItem, selected: !isSelectedItem.selected }
+        : { ...isSelectedItem, selected: isSelectedItem.selected },
     );
     setNetworkList(updatedState);
-    listInfo = { ...listInfo, networks: [item._id] };
+    const allNetworks = updatedState
+      .filter(network => network.selected)
+      .map(list => list._id);
+
+    listInfo = { ...listInfo, networks: allNetworks };
     setListingInfo(listInfo);
   };
 
@@ -134,7 +138,7 @@ export default function CreateListings({ navigation, route }: any) {
             networks: listingInfo.networks,
             price: listingInfo.price,
             freeGiveAway: listingInfo.freeGiveAway,
-            images: [photoInfo],
+            images: photoInfo,
             details: listingInfo.details,
             published: true,
           },
@@ -152,6 +156,9 @@ export default function CreateListings({ navigation, route }: any) {
     if (listingInfo.freeGiveAway) {
       delete body.price;
     }
+    if (!photoInfo.length) {
+      delete body.images;
+    }
     return body;
   };
 
@@ -168,6 +175,10 @@ export default function CreateListings({ navigation, route }: any) {
       ? createRequestBody(true)
       : createRequestBody(false);
 
+    if (!isPublish) {
+      delete requestBody.networks;
+    }
+
     !isPublish ? delete requestBody?.published : null;
 
     const request = listDetails
@@ -181,7 +192,7 @@ export default function CreateListings({ navigation, route }: any) {
         type: 'success',
         message: 'Post is created successfully',
       });
-      navigation.navigate('Listing');
+      navigation.navigate('My Listing');
     } else {
       Snackbar({
         type: 'error',
@@ -192,11 +203,13 @@ export default function CreateListings({ navigation, route }: any) {
   };
 
   const uploadPhoto = async () => {
-    const { assets } = await launchImageLibrary(cameraOptions);
+    const { assets } = await launchCamera(cameraOptions);
     if (assets?.length) {
       const { data } = await UploadMedia(assets[0]);
       if (data) {
-        setPhotoInfo(data);
+        const photos = [...photoInfo];
+        photos.push(data);
+        setPhotoInfo(photos);
       } else {
         Snackbar({
           type: 'error',
@@ -235,12 +248,12 @@ export default function CreateListings({ navigation, route }: any) {
             <View style={CreateListingStyle.list}>
               {networkList.map(item => (
                 <View key={item._id}>
-                  <RadioButton
+                  <CheckboxButton
                     onPress={() => onRadioBtnClick(item)}
                     selected={item.selected}
                     key={item._id}>
                     {item.name}
-                  </RadioButton>
+                  </CheckboxButton>
                 </View>
               ))}
             </View>
@@ -272,6 +285,42 @@ export default function CreateListings({ navigation, route }: any) {
     );
   };
 
+  const renderPhoto = () => {
+    if (!photoInfo.length) {
+      return <></>;
+    }
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+        }}>
+        {photoInfo?.map(photo => {
+          return (
+            <View style={{ margin: 8 }}>
+              <Image
+                source={{
+                  uri: photo,
+                }}
+                style={{ width: 120, height: 120 }}
+              />
+            </View>
+          );
+        })}
+
+        <View style={{ marginLeft: 8 }}>
+          <Pressable onPress={uploadPhoto}>
+            <Image
+              source={require('../../../assets/images/add.png')}
+              style={{ width: 40, height: 40 }}
+            />
+          </Pressable>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <ScrollView style={CreateListingStyle.scrollContainer}>
       <View style={CreateListingStyle.container}>
@@ -280,22 +329,19 @@ export default function CreateListings({ navigation, route }: any) {
         <View style={CreateListingStyle.upload}>
           <NormalText style={{ fontSize: 24 }}>New listing</NormalText>
 
-          <Pressable onPress={uploadPhoto}>
-            {photoInfo !== '' ? (
-              <Image
-                source={{
-                  uri: photoInfo,
-                }}
-                style={{ width: 120, height: 120 }}
-              />
+          <View>
+            {photoInfo.length ? (
+              renderPhoto()
             ) : (
-              <Image
-                source={require('../../../assets/images/upload.png')}
-                style={{ width: 120, height: 120 }}
-              />
+              <Pressable onPress={uploadPhoto}>
+                <Image
+                  source={require('../../../assets/images/upload.png')}
+                  style={{ width: 80, height: 80 }}
+                />
+              </Pressable>
             )}
-          </Pressable>
-          <NormalText>Upload Image</NormalText>
+            {!photoInfo.length && <NormalText>Upload Image</NormalText>}
+          </View>
         </View>
 
         <View>
@@ -312,6 +358,7 @@ export default function CreateListings({ navigation, route }: any) {
               placeholder={'Price'}
               value={listingInfo.price}
               editable={!listingInfo.freeGiveAway}
+              keyboardType="numeric"
               style={{ width: '30%' }}
             />
             <SecondaryButton

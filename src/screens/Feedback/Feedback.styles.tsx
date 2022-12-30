@@ -9,7 +9,7 @@ export default StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 300,
+    paddingBottom: 150,
   },
   headerText: {
     flexDirection: 'row',
@@ -20,8 +20,8 @@ export default StyleSheet.create({
     borderRadius: 12,
     borderBottomColor: '#000000',
     borderWidth: 1,
-    padding: 10,
-    height: 120,
+    paddingHorizontal: 10,
+    // height: 120,
   },
   options: {
     marginVertical: 16,

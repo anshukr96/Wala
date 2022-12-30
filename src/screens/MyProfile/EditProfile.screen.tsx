@@ -49,7 +49,7 @@ export default function EditProfile({ route, navigation }: any) {
         message: data,
         type: 'success',
       });
-      navigation.navigate('MyProfile');
+      navigation.navigate('My Profile');
     } else {
       Snackbar({
         message: error,
@@ -105,7 +105,7 @@ export default function EditProfile({ route, navigation }: any) {
       <ProfileHeader />
 
       <View style={ProfileStyles.profile}>
-        <View>
+        <View style={ProfileStyles.profileContainer}>
           <Pressable onPress={uploadPhoto} style={ProfileStyles.upload}>
             {profileInfo.profileImage !== '' ? (
               <Image
@@ -120,7 +120,7 @@ export default function EditProfile({ route, navigation }: any) {
           </Pressable>
 
           <Pressable onPress={onPhotoDelete}>
-            <Icon name={'ios-trash-outline'} size={150} color={'black'} />
+            <Icon name={'ios-trash-outline'} size={30} color={'black'} />
           </Pressable>
         </View>
 

@@ -27,7 +27,7 @@ export default function Signout({ navigation }: any) {
   };
 
   const goBack = () => {
-    navigation.navigate('Listing');
+    navigation.navigate('My Listing');
   };
 
   return (

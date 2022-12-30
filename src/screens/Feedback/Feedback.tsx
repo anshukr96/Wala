@@ -94,6 +94,7 @@ export default function Feedback({ navigation }: any) {
             placeholder="Please type your message here"
             style={FeedbackStyles.input}
             multiline
+            numberOfLines={8}
             onChangeText={text => setFeedback(text)}
           />
 

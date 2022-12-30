@@ -51,9 +51,10 @@ export default StyleSheet.create({
     backgroundColor: '#fff',
     zIndex: 10,
     padding: 16,
-    width: 220,
+    width: 250,
     borderRadius: 8,
-    boxShadow: '5px 5px 20px red',
+    elevation: 60,
+    shadowColor: '#FF0000',
   },
   dropdownCTA: {
     flexDirection: 'row',

@@ -17,7 +17,7 @@ import { StackParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavi
 import Snackbar from '../../utils/Toast';
 import FeedStyles from './Feed.style';
 
-type Props = DrawerScreenProps<StackParamList, 'My Listing'>;
+type Props = DrawerScreenProps<StackParamList, 'Feeds'>;
 
 interface FeedHeaderProps {
   onMenuToggle: () => void;
@@ -110,7 +110,7 @@ const Feed = ({ navigation }: Props) => {
       <StatusBar barStyle="dark-content" backgroundColor={'#f9f9f9'} />
       <FeedHeader
         onMenuToggle={() => navigation.toggleDrawer()}
-        onPress={() => navigation.navigate('ExistingListing')}
+        onPress={() => navigation.navigate('My Listing')}
       />
       {feedList.length ? renderPosts() : renderNoNetwork()}
     </>

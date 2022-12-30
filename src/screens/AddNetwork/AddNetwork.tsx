@@ -66,6 +66,8 @@ export default function AddNetwork({ navigation }: Props) {
     let resedentialList: NetworkListResponse[] = [];
     let societyList: NetworkListResponse[] = [];
 
+    console.log(data, 'dataresponse');
+
     if (data) {
       data.map((list: NetworkListResponse) => {
         if (list.type == NETWORK_LIST.RESIDENTIAL) {

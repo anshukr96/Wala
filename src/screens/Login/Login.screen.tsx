@@ -47,6 +47,13 @@ export default function Login({ navigation }: Props) {
     }
   };
 
+  const getButtonColor = () => {
+    if (!isOTP) {
+      return phoneNumber.length < 10 ? '#D3D3D3' : '#088F8F';
+    }
+    return otp.length < 4 ? '#D3D3D3' : '#088F8F';
+  };
+
   const verifyPhoneOTP = async () => {
     if (!otp.length) {
       Snackbar({
@@ -104,6 +111,7 @@ export default function Login({ navigation }: Props) {
               title={isOTP ? 'VERIFY OTP' : 'SEND OTP'}
               onPress={isOTP ? verifyPhoneOTP : sendPhoneOTP}
               disabled={!isOTP && phoneNumber.length < 10}
+              style={{ backgroundColor: getButtonColor() }}
             />
           </View>
         </View>
