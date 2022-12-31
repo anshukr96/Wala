@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ import {
 } from 'react-native-confirmation-code-field';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { AddToNetwork, GetNetworkList } from '../../api/network';
+import { GetUserDetails } from '../../api/user';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 
 import CreaterModal from '../../Modal/Modal';
@@ -24,7 +26,12 @@ import NetworkAddModal from '../../Modal/NetworkAddModal';
 import NoNetworkPopup from '../../Modal/NoNetworkPopup';
 import { DrawerParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
 import { NetworkListResponse } from '../../types/network/network';
-import { isIOS, NETWORK_LIST, NETWORK_TYPE } from '../../utils/constants';
+import {
+  isIOS,
+  NETWORK_LIST,
+  NETWORK_TYPE,
+  USERID,
+} from '../../utils/constants';
 import Snackbar from '../../utils/Toast';
 import styles from './AddNetwork.styles';
 
@@ -40,6 +47,7 @@ export default function AddNetwork({ navigation }: Props) {
   const [value, setValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isNoNetworkAdded, setIsNoNetworkAdded] = useState(false);
+  const [networks, setNetworks] = useState([] as NetworkListResponse[]);
   const [resedentialSocietyList, setResedentialSocietyList] = useState<
     NetworkListResponse[]
   >([]);
@@ -58,15 +66,28 @@ export default function AddNetwork({ navigation }: Props) {
 
   useEffect(() => {
     populatenetwork();
+    getUserInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const getUserInfo = async () => {
+    const userID = await AsyncStorage.getItem(USERID);
+    const { data } = await GetUserDetails(userID || '');
+    if (data) {
+      setNetworks(data.networks);
+    } else {
+      Snackbar({
+        type: 'error',
+        message: 'Unable to fetch network details,',
+      });
+      navigation.goBack();
+    }
+  };
 
   const populatenetwork = async () => {
     const { data } = await GetNetworkList();
     let resedentialList: NetworkListResponse[] = [];
     let societyList: NetworkListResponse[] = [];
-
-    console.log(data, 'dataresponse');
 
     if (data) {
       data.map((list: NetworkListResponse) => {
@@ -112,7 +133,26 @@ export default function AddNetwork({ navigation }: Props) {
     );
   };
 
+  const isNetworkAlreadyAdded = () => {
+    if (!networks.length) {
+      return false;
+    }
+    const selectedNetwork = networks?.filter(
+      network => network?._id === selectedList?._id,
+    );
+
+    return selectedNetwork.length ? true : false;
+  };
+
   const addToNetwork = async () => {
+    if (isNetworkAlreadyAdded()) {
+      Snackbar({
+        type: 'error',
+        message: 'You are already a part of this network',
+      });
+      return;
+    }
+
     const body = {
       networkId: selectedList?._id || '',
       joiningCode: value,
@@ -178,7 +218,12 @@ export default function AddNetwork({ navigation }: Props) {
       ) : (
         <View style={{ margin: 10 }}>
           <View>
-            <Pressable onPress={() => setIsNoNetworkAdded(true)}>
+            <Pressable
+              onPress={() =>
+                networks.length
+                  ? navigation.goBack()
+                  : setIsNoNetworkAdded(true)
+              }>
               <Icon name={'arrow-back-outline'} size={24} color={'black'} />
             </Pressable>
             <Text style={styles.headerText}>Add Network</Text>

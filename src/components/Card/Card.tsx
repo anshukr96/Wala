@@ -19,6 +19,7 @@ export default function Card({
 }: any) {
   const [options, setOptions] = useState<OptionProps[]>(MENU_OPTIONS);
   const [isMenuOpened, setIsMenuOpened] = useState(false);
+  const [isExpand, setIsExpand] = useState(false);
 
   const onRadioBtnClick = (item: OptionProps) => {
     let updatedState = options.map(isSelectedItem =>
@@ -84,7 +85,7 @@ export default function Card({
               <RadioButton
                 onPress={() => onRadioBtnClick(item)}
                 selected={item.selected}
-                key={item._id}>
+                key={index}>
                 {item.name}
               </RadioButton>
             </View>
@@ -105,82 +106,93 @@ export default function Card({
   };
 
   return (
-    <View style={CardStyles.container}>
-      <View style={CardStyles.img}>
-        {posts.images?.length ? (
-          <Image
-            source={{
-              uri: posts.images[0],
-            }}
-            style={{ width: 120, height: 120 }}
-          />
-        ) : (
-          <Image
-            source={require('../../assets/images/no_image.png')}
-            style={{ width: 150, height: 150, marginBottom: 12 }}
-          />
-        )}
-        {isEdit && (
-          <Pressable onPress={() => onPostEdit(posts)}>
-            <BoldText style={CardStyles.edit}>EDIT</BoldText>
-          </Pressable>
-        )}
-      </View>
-
-      <View
-        style={{
-          position: 'relative',
-          marginLeft: 16,
-        }}>
-        <View style={CardStyles.header}>
-          <View>
-            <BoldText>{posts.title}</BoldText>
-            <View style={{ flexDirection: 'row' }}>
-              <NormalText style={CardStyles.info}>Price: Rs </NormalText>
-              <NormalText style={CardStyles.info}>{posts.price}</NormalText>
-            </View>
-          </View>
-
+    <View style={CardStyles.card}>
+      <View style={CardStyles.container}>
+        <View style={CardStyles.img}>
+          {posts.images?.length ? (
+            <Image
+              source={{
+                uri: posts.images[0],
+              }}
+              style={{ width: 120, height: 120 }}
+            />
+          ) : (
+            <Image
+              source={require('../../assets/images/no_image.png')}
+              style={{ width: 150, height: 150, marginBottom: 12 }}
+            />
+          )}
           {isEdit && (
-            <View>
-              <Pressable onPress={() => setIsMenuOpened(menu => !menu)}>
-                <Icon name="close" size={32} color="red" />
-              </Pressable>
-              <View style={CardStyles.dropdownPosition}>
-                {isMenuOpened && renderDropdown()}
-              </View>
-            </View>
+            <Pressable onPress={() => onPostEdit(posts)}>
+              <BoldText style={CardStyles.edit}>EDIT</BoldText>
+            </Pressable>
           )}
         </View>
 
-        <View style={{ marginTop: 24 }}>
-          <View style={CardStyles.details}>
-            <NormalText style={CardStyles.detailText}>Seller:</NormalText>
-            <BoldText style={CardStyles.detailText}>Suyash kumar</BoldText>
-          </View>
-          <View style={CardStyles.details}>
-            <NormalText style={CardStyles.detailText}>Connection:</NormalText>
-            <BoldText>{posts.networks[0]?.name}</BoldText>
-          </View>
-          <View>
-            <NormalText style={{ textDecorationLine: 'underline' }}>
-              More details
-            </NormalText>
-          </View>
-        </View>
+        <View
+          style={{
+            position: 'relative',
+            marginLeft: 16,
+          }}>
+          <View style={CardStyles.header}>
+            <View>
+              <BoldText>{posts.title}</BoldText>
+              <View style={{ flexDirection: 'row' }}>
+                <NormalText style={CardStyles.info}>Price: Rs </NormalText>
+                <NormalText style={CardStyles.info}>{posts.price}</NormalText>
+              </View>
+            </View>
 
-        {isEdit && (
-          <View style={CardStyles.share}>
-            <NormalText style={CardStyles.text}>Share on:</NormalText>
-            <Pressable onPress={shareOnWhatsapp}>
-              <Icon name="logo-whatsapp" size={32} color="green" />
-            </Pressable>
-            <Pressable onPress={shareOnMail}>
-              <Icon name="mail" size={32} style={{ marginLeft: 8 }} />
+            {isEdit && (
+              <View>
+                <Pressable onPress={() => setIsMenuOpened(menu => !menu)}>
+                  <Icon name="close" size={32} color="red" />
+                </Pressable>
+                <View style={CardStyles.dropdownPosition}>
+                  {isMenuOpened && renderDropdown()}
+                </View>
+              </View>
+            )}
+          </View>
+
+          <View style={{ marginTop: 24 }}>
+            <View style={CardStyles.details}>
+              <NormalText style={CardStyles.detailText}>Seller:</NormalText>
+              <BoldText style={CardStyles.detailText}>Suyash kumar</BoldText>
+            </View>
+            <View style={CardStyles.details}>
+              <NormalText style={CardStyles.detailText}>Connection:</NormalText>
+              <BoldText>{posts.networks[0]?.name}</BoldText>
+            </View>
+
+            <Pressable onPress={() => setIsExpand(expand => !expand)}>
+              <NormalText style={{ textDecorationLine: 'underline' }}>
+                {isExpand ? 'Less details' : 'More details'}
+              </NormalText>
             </Pressable>
           </View>
-        )}
+
+          {isEdit && (
+            <View style={CardStyles.share}>
+              <NormalText style={CardStyles.text}>Share on:</NormalText>
+              <Pressable onPress={shareOnWhatsapp}>
+                <Icon name="logo-whatsapp" size={32} color="green" />
+              </Pressable>
+              <Pressable onPress={shareOnMail}>
+                <Icon name="mail" size={32} style={{ marginLeft: 8 }} />
+              </Pressable>
+            </View>
+          )}
+        </View>
       </View>
+
+      {!isEdit && isExpand && (
+        <View>
+          <NormalText style={CardStyles.detailsText}>
+            {posts?.details}
+          </NormalText>
+        </View>
+      )}
     </View>
   );
 }

@@ -13,6 +13,8 @@ import { GetPostsList } from '../../api/feeds';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import SecondaryButton from '../../components/Button/SecondaryButton';
 import Card from '../../components/Card/Card';
+import PrimaryInput from '../../components/Input';
+import { useDebounce } from '../../hooks/useDebounce';
 import { StackParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
 import Snackbar from '../../utils/Toast';
 import FeedStyles from './Feed.style';
@@ -22,6 +24,7 @@ type Props = DrawerScreenProps<StackParamList, 'Feeds'>;
 interface FeedHeaderProps {
   onMenuToggle: () => void;
   onPress: () => void;
+  onSearch: (text: string) => void;
 }
 
 const Feed = ({ navigation }: Props) => {
@@ -40,7 +43,8 @@ const Feed = ({ navigation }: Props) => {
     return unsubscribe;
   }, [navigation]);
 
-  const fetchPostList = async () => {
+  const fetchPostList = async (text = '') => {
+    console.log(text, 'searchtext');
     const { data } = await GetPostsList();
     if (data) {
       setFeedList(data);
@@ -53,6 +57,10 @@ const Feed = ({ navigation }: Props) => {
       });
       setLoading(false);
     }
+  };
+
+  const onPostSearch = (searchText: string) => {
+    fetchPostList(searchText);
   };
 
   const renderNoNetwork = () => {
@@ -111,13 +119,26 @@ const Feed = ({ navigation }: Props) => {
       <FeedHeader
         onMenuToggle={() => navigation.toggleDrawer()}
         onPress={() => navigation.navigate('My Listing')}
+        onSearch={(text: string) => onPostSearch(text)}
       />
       {feedList.length ? renderPosts() : renderNoNetwork()}
     </>
   );
 };
 
-export const FeedHeader = ({ onMenuToggle, onPress }: FeedHeaderProps) => {
+export const FeedHeader = ({
+  onMenuToggle,
+  onPress,
+  onSearch,
+}: FeedHeaderProps) => {
+  const [toShowSearchInput, settoShowSearchInput] = useState(false);
+  const [searchVal, setSearchVal] = useState('');
+  const searchQuery = useDebounce(searchVal, 500);
+
+  useEffect(() => {
+    onSearch(searchQuery);
+  }, [searchQuery, onSearch]);
+
   return (
     <View style={FeedStyles.outerWrapper}>
       <Pressable onPress={onMenuToggle}>
@@ -126,9 +147,20 @@ export const FeedHeader = ({ onMenuToggle, onPress }: FeedHeaderProps) => {
       <View style={FeedStyles.ctaWrapper}>
         <SecondaryButton title="New listing" onPress={onPress} />
 
-        <View style={FeedStyles.searchWrapper}>
+        {toShowSearchInput && (
+          <PrimaryInput
+            onChangeText={text => setSearchVal(text)}
+            placeholder={'search posts by name'}
+            value={searchVal}
+            style={{ width: 160 }}
+          />
+        )}
+
+        <Pressable
+          style={FeedStyles.searchWrapper}
+          onPress={() => settoShowSearchInput(input => !input)}>
           <Icon name={'ios-search'} size={24} color={'black'} />
-        </View>
+        </Pressable>
       </View>
     </View>
   );

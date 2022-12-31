@@ -69,7 +69,11 @@ export default function CreateListings({ navigation, route }: any) {
     if (Object.keys(listDetails).length) {
       const dummyList = [...listInfo];
       dummyList.map(list => {
-        if (list._id === listDetails.networks[0]._id) {
+        if (
+          listDetails.networks.filter(
+            (network: any) => network._id === list._id,
+          ).length
+        ) {
           list.selected = true;
         }
       });
@@ -82,11 +86,11 @@ export default function CreateListings({ navigation, route }: any) {
       heading: listDetails.title,
       price: listDetails.price.toString(),
       details: listDetails?.details || '',
-      networks: [listDetails.networks[0]._id],
+      networks: listDetails.networks,
       freeGiveAway: listDetails.freeGiveAway,
     };
     setListingInfo(details);
-    setPhotoInfo(listDetails.images[0]);
+    setPhotoInfo(listDetails.images);
   };
 
   const getNetworkDetails = async () => {

@@ -1,16 +1,18 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  container: {
-    flexDirection: 'row',
+  card: {
     borderWidth: 2,
     borderColor: '#D3D3D3',
-    padding: 8,
-    margin: 16,
     backgroundColor: '#fff',
     borderRadius: 8,
     elevation: 20,
     shadowColor: '#90EE90',
+    padding: 8,
+    margin: 16,
+  },
+  container: {
+    flexDirection: 'row',
   },
   share: {
     flexDirection: 'row',
@@ -29,6 +31,10 @@ export default StyleSheet.create({
   },
   info: {
     marginTop: 16,
+  },
+  detailsText: {
+    marginTop: 16,
+    fontSize: 14,
   },
   details: {
     flexDirection: 'row',
