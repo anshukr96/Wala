@@ -14,6 +14,7 @@ import PrimaryButton from '../../components/Button/PrimaryButton';
 import SecondaryButton from '../../components/Button/SecondaryButton';
 import Card from '../../components/Card/Card';
 import PrimaryInput from '../../components/Input';
+import BoldText from '../../components/Text/BoldText';
 import { useDebounce } from '../../hooks/useDebounce';
 import { StackParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
 import Snackbar from '../../utils/Toast';
@@ -30,6 +31,7 @@ interface FeedHeaderProps {
 const Feed = ({ navigation }: Props) => {
   const [feedList, setFeedList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSearch, setIsSearch] = useState(false);
 
   useEffect(() => {
     fetchPostList();
@@ -60,6 +62,7 @@ const Feed = ({ navigation }: Props) => {
 
   const onPostSearch = (searchText: string) => {
     fetchPostList(searchText);
+    searchText === '' ? setIsSearch(false) : setIsSearch(true);
   };
 
   const renderNoNetwork = () => {
@@ -108,6 +111,14 @@ const Feed = ({ navigation }: Props) => {
     return (
       <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
         <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (!feedList.length && isSearch) {
+    return (
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <BoldText>Sorry, no matches found"</BoldText>
       </View>
     );
   }

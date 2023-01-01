@@ -163,7 +163,7 @@ export default function AddNetwork({ navigation }: Props) {
     if (!error) {
       Snackbar({
         type: 'success',
-        message: message,
+        message: "You've successfully added the network",
         position: 'bottom',
       });
       navigation.goBack();

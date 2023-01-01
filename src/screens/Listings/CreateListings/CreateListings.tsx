@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
-import { launchCamera } from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { CreatePost, UpdatePost } from '../../../api/feeds';
 import { GetNetworkList } from '../../../api/network';
@@ -91,6 +91,15 @@ export default function CreateListings({ navigation, route }: any) {
     };
     setListingInfo(details);
     setPhotoInfo(listDetails.images);
+  };
+
+  const onPriceFocus = () => {
+    listingInfo.freeGiveAway
+      ? Snackbar({
+          type: 'error',
+          message: 'Please deselect Free Giveaway to add price',
+        })
+      : null;
   };
 
   const getNetworkDetails = async () => {
@@ -189,6 +198,13 @@ export default function CreateListings({ navigation, route }: any) {
       return;
     }
 
+    if (listingInfo.heading === '') {
+      return Snackbar({
+        type: 'error',
+        message: 'Heading cannot be empty',
+      });
+    }
+
     let requestBody = listDetails
       ? createRequestBody(true)
       : createRequestBody(false);
@@ -208,7 +224,9 @@ export default function CreateListings({ navigation, route }: any) {
     if (data) {
       Snackbar({
         type: 'success',
-        message: 'Post is created successfully',
+        message: !isPublish
+          ? 'Post saved to your My Listings page'
+          : 'Post is created successfully',
       });
       navigation.navigate('Feeds');
     } else {
@@ -221,7 +239,7 @@ export default function CreateListings({ navigation, route }: any) {
   };
 
   const uploadPhoto = async () => {
-    const { assets } = await launchCamera(cameraOptions);
+    const { assets } = await launchImageLibrary(cameraOptions);
     if (assets?.length) {
       const { data } = await UploadMedia(assets[0]);
       if (data) {
@@ -375,6 +393,7 @@ export default function CreateListings({ navigation, route }: any) {
               onChangeText={text => updateDetails(text, 'price')}
               placeholder={'Price'}
               value={listingInfo.price}
+              onFocus={onPriceFocus}
               editable={!listingInfo.freeGiveAway}
               keyboardType="numeric"
               style={{ width: '30%' }}

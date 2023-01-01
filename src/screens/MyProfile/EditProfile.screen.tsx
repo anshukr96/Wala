@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, Pressable, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Pressable, View } from 'react-native';
 import {
   CameraOptions,
   launchCamera,
@@ -76,6 +76,12 @@ export default function EditProfile({ route, navigation }: any) {
   };
 
   const updateUserInfo = async () => {
+    if (profileInfo.username === '') {
+      return Snackbar({
+        type: 'error',
+        message: 'Username is mandatory',
+      });
+    }
     const requestbody = {
       username: profileInfo.username,
       profileImage: profileInfo.profileImage,
@@ -139,6 +145,30 @@ export default function EditProfile({ route, navigation }: any) {
     );
   };
 
+  const showPhotoDeleteAlert = () => {
+    Alert.alert(
+      'Photo delete',
+      'Are you sure you want to delete this photo?',
+      [
+        {
+          text: 'Delete',
+          onPress: () => {
+            onPhotoDelete();
+          },
+          style: 'destructive',
+        },
+        {
+          text: 'Cancel',
+          onPress: () => {
+            console.log('cancel pressed');
+          },
+          style: 'cancel',
+        },
+      ],
+      { cancelable: false },
+    );
+  };
+
   const onPhotoDelete = () => {
     let info = { ...profileInfo };
     info = { ...info, profileImage: '' };
@@ -172,7 +202,7 @@ export default function EditProfile({ route, navigation }: any) {
             )}
           </Pressable>
 
-          <Pressable onPress={onPhotoDelete}>
+          <Pressable onPress={showPhotoDeleteAlert}>
             <Icon name={'ios-trash-outline'} size={30} color={'black'} />
           </Pressable>
         </View>

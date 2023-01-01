@@ -8,12 +8,14 @@ interface PrimaryInputProps {
   maxLength?: number;
   style?: Record<string, string | number>;
   keyboardType?: KeyboardTypeOptions | undefined;
+  onFocus?: any;
   editable?: boolean;
 }
 
 export default function PrimaryInput({
   value,
   onChangeText,
+  onFocus,
   placeholder,
   maxLength,
   keyboardType,
@@ -29,6 +31,7 @@ export default function PrimaryInput({
       maxLength={maxLength}
       keyboardType={keyboardType}
       editable={editable}
+      onFocus={onFocus}
       placeholderTextColor="#454545"
     />
   );

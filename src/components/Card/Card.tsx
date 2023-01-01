@@ -3,6 +3,7 @@ import { Image, Linking, Pressable, View } from 'react-native';
 import Share from 'react-native-share';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { DeletePost } from '../../api/feeds';
+import ImageModal from '../../Modal/ImageModal';
 import { MENU_OPTIONS, OptionProps } from '../../utils/constants';
 import Snackbar from '../../utils/Toast';
 import SecondaryButton from '../Button/SecondaryButton';
@@ -34,6 +35,10 @@ export default function Card({
     Linking.openURL(
       'mailto:support@example.com?subject=SendMail&body=Description',
     );
+  };
+
+  const showImageModal = () => {
+    ImageModal(posts.images[0]);
   };
 
   const shareOnWhatsapp = () => {
@@ -114,12 +119,14 @@ export default function Card({
       <View style={CardStyles.container}>
         <View style={CardStyles.img}>
           {posts.images?.length ? (
-            <Image
-              source={{
-                uri: posts.images[0],
-              }}
-              style={{ width: 120, height: 120 }}
-            />
+            <Pressable onPress={showImageModal}>
+              <Image
+                source={{
+                  uri: posts.images[0],
+                }}
+                style={{ width: 120, height: 120 }}
+              />
+            </Pressable>
           ) : (
             <Image
               source={require('../../assets/images/no_image.png')}
@@ -143,7 +150,9 @@ export default function Card({
               <BoldText>{posts.title}</BoldText>
               <View style={{ flexDirection: 'row' }}>
                 <NormalText style={CardStyles.info}>Price: Rs </NormalText>
-                <NormalText style={CardStyles.info}>{posts.price}</NormalText>
+                <NormalText style={CardStyles.info}>
+                  {posts.freeGiveAway ? 'Free giveaway' : posts.price}
+                </NormalText>
               </View>
             </View>
 
