@@ -132,6 +132,7 @@ export default function CreateListings({ navigation, route }: any) {
   };
 
   const createRequestBody = (isUpdatePost: boolean) => {
+    const networks = [...networkList];
     const body = isUpdatePost
       ? {
           query: {
@@ -139,7 +140,9 @@ export default function CreateListings({ navigation, route }: any) {
           },
           payload: {
             title: listingInfo.heading,
-            networks: listingInfo.networks,
+            networks: networks
+              .filter(network => network.selected)
+              .map(list => list._id),
             price: listingInfo.price,
             freeGiveAway: listingInfo.freeGiveAway,
             images: photoInfo,
@@ -149,10 +152,12 @@ export default function CreateListings({ navigation, route }: any) {
         }
       : {
           title: listingInfo.heading,
-          networks: listingInfo.networks,
+          networks: networks
+            .filter(network => network.selected)
+            .map(list => list._id),
           price: listingInfo.price,
           freeGiveAway: listingInfo.freeGiveAway,
-          images: [photoInfo],
+          images: photoInfo,
           details: listingInfo.details,
           published: true,
         };
@@ -163,11 +168,20 @@ export default function CreateListings({ navigation, route }: any) {
     if (!photoInfo.length) {
       delete body.images;
     }
+
+    if (listingInfo.details === '') {
+      delete body.details;
+    }
+
+    if (body?.payload?.details === '') {
+      delete body?.payload?.details;
+    }
+
     return body;
   };
 
   const publishNewPost = async (isPublish = false) => {
-    if (listingInfo.networks[0] === '' && isPublish) {
+    if (!listingInfo.networks.length && isPublish) {
       Snackbar({
         type: 'error',
         message: 'choose network where you want to show your post',
@@ -196,7 +210,7 @@ export default function CreateListings({ navigation, route }: any) {
         type: 'success',
         message: 'Post is created successfully',
       });
-      navigation.navigate('My Listing');
+      navigation.navigate('Feeds');
     } else {
       Snackbar({
         type: 'error',

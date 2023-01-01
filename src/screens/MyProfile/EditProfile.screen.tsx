@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
 import { Image, Pressable, View } from 'react-native';
 import {
   CameraOptions,
@@ -12,6 +13,7 @@ import PrimaryButton from '../../components/Button/PrimaryButton';
 import PrimaryInput from '../../components/Input';
 import BoldText from '../../components/Text/BoldText';
 import { UserInfoBody } from '../../types/users/user';
+import { USERNAME } from '../../utils/constants';
 import Snackbar from '../../utils/Toast';
 import ProfileStyles from './MyProfile.styles';
 
@@ -22,13 +24,42 @@ export const cameraOptions: CameraOptions = {
   mediaType: 'photo' as MediaType,
 };
 
+const defaultProfile = {
+  name: '',
+  email: '',
+  imageUrl: '',
+};
 export default function EditProfile({ route, navigation }: any) {
-  const { profile } = route.params;
   const [profileInfo, setProfileInfo] = useState<UserInfoBody>({
-    username: profile.name,
-    email: profile.email,
-    profileImage: profile.imageUrl,
+    username: '',
+    email: '',
+    profileImage: '',
   });
+  let userName: string | null;
+
+  useEffect(() => {
+    getUserInfo();
+    populateInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const populateInfo = () => {
+    let profile = route?.params ? route?.params?.profile : defaultProfile;
+
+    const info = {
+      username: profile.name,
+      email: profile.email,
+      profileImage: profile.imageUrl,
+    };
+    setProfileInfo(info);
+  };
+
+  const getUserInfo = async () => {
+    userName = await AsyncStorage.getItem(USERNAME);
+    if (userName && userName !== '') {
+      navigation.navigate('Home', { screen: 'Feeds' });
+    }
+  };
 
   const updateDetails = (text: any, type: string) => {
     const details = { ...profileInfo, [type]: text };
@@ -49,7 +80,10 @@ export default function EditProfile({ route, navigation }: any) {
         message: data,
         type: 'success',
       });
-      navigation.navigate('My Profile');
+      AsyncStorage.setItem(USERNAME, profileInfo.username);
+      userName && userName !== ''
+        ? navigation.navigate('My Profile')
+        : navigation.navigate('Home', { screen: 'Feeds' });
     } else {
       Snackbar({
         message: error,
@@ -78,14 +112,16 @@ export default function EditProfile({ route, navigation }: any) {
   const ProfileHeader = () => {
     return (
       <View>
-        <Pressable onPress={() => navigation.goBack()}>
-          <Icon
-            name={'arrow-back-outline'}
-            size={30}
-            color={'black'}
-            style={{ marginLeft: -16 }}
-          />
-        </Pressable>
+        {userName && userName !== '' && (
+          <Pressable onPress={() => navigation.navigate('My Profile')}>
+            <Icon
+              name={'arrow-back-outline'}
+              size={30}
+              color={'black'}
+              style={{ marginLeft: -16 }}
+            />
+          </Pressable>
+        )}
 
         <View style={ProfileStyles.headerText}>
           <BoldText>EDIT PROFILE</BoldText>

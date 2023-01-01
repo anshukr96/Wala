@@ -11,6 +11,7 @@ export const isIOS = Platform.OS == 'ios';
 
 export const BASE_URL = 'http://35.154.18.227/api/v1';
 export const USERID = 'userID';
+export const USERNAME = 'USERNAME';
 export const TOKEN = 'token';
 export const TOAST = {
   ERROR: 'error',

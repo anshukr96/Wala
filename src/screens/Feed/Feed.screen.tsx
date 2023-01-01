@@ -44,8 +44,7 @@ const Feed = ({ navigation }: Props) => {
   }, [navigation]);
 
   const fetchPostList = async (text = '') => {
-    console.log(text, 'searchtext');
-    const { data } = await GetPostsList();
+    const { data } = await GetPostsList(text);
     if (data) {
       setFeedList(data);
       setLoading(false);
@@ -137,7 +136,8 @@ export const FeedHeader = ({
 
   useEffect(() => {
     onSearch(searchQuery);
-  }, [searchQuery, onSearch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   return (
     <View style={FeedStyles.outerWrapper}>

@@ -100,7 +100,7 @@ export default function MyProfile({ navigation }: any) {
   const ProfileHeader = () => {
     return (
       <View>
-        <Pressable onPress={() => navigation.goBack()}>
+        <Pressable onPress={() => navigation.navigate('Feeds')}>
           <Icon
             name={'arrow-back-outline'}
             size={30}

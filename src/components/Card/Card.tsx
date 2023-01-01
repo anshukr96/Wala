@@ -105,6 +105,10 @@ export default function Card({
     );
   };
 
+  const fetchDetails = async () => {
+    setIsExpand(expand => !expand);
+  };
+
   return (
     <View style={CardStyles.card}>
       <View style={CardStyles.container}>
@@ -158,18 +162,22 @@ export default function Card({
           <View style={{ marginTop: 24 }}>
             <View style={CardStyles.details}>
               <NormalText style={CardStyles.detailText}>Seller:</NormalText>
-              <BoldText style={CardStyles.detailText}>Suyash kumar</BoldText>
+              <BoldText style={CardStyles.detailText}>
+                {posts?.user?.username}
+              </BoldText>
             </View>
             <View style={CardStyles.details}>
               <NormalText style={CardStyles.detailText}>Connection:</NormalText>
               <BoldText>{posts.networks[0]?.name}</BoldText>
             </View>
 
-            <Pressable onPress={() => setIsExpand(expand => !expand)}>
-              <NormalText style={{ textDecorationLine: 'underline' }}>
-                {isExpand ? 'Less details' : 'More details'}
-              </NormalText>
-            </Pressable>
+            {!isEdit && (
+              <Pressable onPress={fetchDetails}>
+                <NormalText style={{ textDecorationLine: 'underline' }}>
+                  {isExpand ? 'Less details' : 'More details'}
+                </NormalText>
+              </Pressable>
+            )}
           </View>
 
           {isEdit && (

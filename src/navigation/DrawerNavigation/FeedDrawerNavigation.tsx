@@ -54,6 +54,13 @@ const FeedDrawerMenu = () => {
           backgroundColor: '#90EE90',
         },
       }}>
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfile}
+        options={{
+          drawerItemStyle: { height: 0 },
+        }}
+      />
       <Drawer.Screen name="Home" component={FeedStackScreen} />
       <Drawer.Screen name="My Listing" component={ExistingListings} />
       <Drawer.Screen name="My Profile" component={MyProfile} />

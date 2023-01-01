@@ -109,9 +109,8 @@ const MainNavigation = () => {
           userId: data.id,
         });
       },
-      signOut: () => {
-        AsyncStorage.removeItem(USERID);
-        AsyncStorage.removeItem(TOKEN);
+      signOut: async () => {
+        await AsyncStorage.clear();
         dispatch({ type: 'SIGN_OUT' });
       },
       signUp: async (data: any) => {

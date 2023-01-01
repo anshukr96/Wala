@@ -6,9 +6,14 @@ import { BASE_URL } from '../utils/constants';
  * @returns
  */
 
-export const GetPostsList = async () => {
+export const GetPostsList = async (searchText: string) => {
+  const url =
+    searchText === ''
+      ? `${BASE_URL}/post?published=true`
+      : `${BASE_URL}/post?published=true&text=${searchText}`;
+
   const request = await $axios
-    .get(`${BASE_URL}/post?published=true`)
+    .get(url)
     .then(res => {
       if (res.status === 200) {
         return { data: res.data.data, err: null };
@@ -126,6 +131,28 @@ export const GetExistingPosts = async (userID: string) => {
     .then(res => {
       if (res.status === 200) {
         return { data: res.data.data, err: 'Unable to fetch list' };
+      }
+      return { data: null, err: 'Unable to fetch list' };
+    })
+    .catch(_ => {
+      return { data: null, err: 'Unable to fetch list' };
+    });
+
+  return request;
+};
+
+/**
+ * Get existing post details
+ * @param postID
+ * @returns
+ */
+
+export const FetchPostDetails = async (postID: string) => {
+  const request = await $axios
+    .get(`${BASE_URL}/post/${postID}`)
+    .then(res => {
+      if (res.status === 200) {
+        return { data: res.data.data.details, err: 'Unable to fetch list' };
       }
       return { data: null, err: 'Unable to fetch list' };
     })
