@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Image, Pressable, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, View } from 'react-native';
 import {
   CameraOptions,
   launchCamera,
@@ -8,12 +8,12 @@ import {
   PhotoQuality,
 } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { UpdateUserDetails, UploadMedia } from '../../api/user';
+import { GetUserDetails, UpdateUserDetails, UploadMedia } from '../../api/user';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import PrimaryInput from '../../components/Input';
 import BoldText from '../../components/Text/BoldText';
 import { UserInfoBody } from '../../types/users/user';
-import { USERNAME } from '../../utils/constants';
+import { USERID } from '../../utils/constants';
 import Snackbar from '../../utils/Toast';
 import ProfileStyles from './MyProfile.styles';
 
@@ -30,18 +30,33 @@ const defaultProfile = {
   imageUrl: '',
 };
 export default function EditProfile({ route, navigation }: any) {
+  const [loading, setLoading] = useState<boolean>(true);
   const [profileInfo, setProfileInfo] = useState<UserInfoBody>({
     username: '',
     email: '',
     profileImage: '',
   });
-  let userName: string | null;
 
   useEffect(() => {
-    getUserInfo();
-    populateInfo();
+    const unsubscribe = navigation.addListener('focus', () => {
+      getUserInfo();
+    });
+
+    return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigation]);
+
+  const getUserInfo = async () => {
+    if (!route?.params) {
+      const userID = await AsyncStorage.getItem(USERID);
+      const { data } = await GetUserDetails(userID || '');
+      if (data?.username) {
+        navigation.navigate('Home', { screen: 'Feeds' });
+        return;
+      }
+    }
+    populateInfo();
+  };
 
   const populateInfo = () => {
     let profile = route?.params ? route?.params?.profile : defaultProfile;
@@ -52,13 +67,7 @@ export default function EditProfile({ route, navigation }: any) {
       profileImage: profile.imageUrl,
     };
     setProfileInfo(info);
-  };
-
-  const getUserInfo = async () => {
-    userName = await AsyncStorage.getItem(USERNAME);
-    if (userName && userName !== '') {
-      navigation.navigate('Home', { screen: 'Feeds' });
-    }
+    setLoading(false);
   };
 
   const updateDetails = (text: any, type: string) => {
@@ -80,8 +89,8 @@ export default function EditProfile({ route, navigation }: any) {
         message: data,
         type: 'success',
       });
-      AsyncStorage.setItem(USERNAME, profileInfo.username);
-      userName && userName !== ''
+
+      route?.params
         ? navigation.navigate('My Profile')
         : navigation.navigate('Home', { screen: 'Feeds' });
     } else {
@@ -112,7 +121,7 @@ export default function EditProfile({ route, navigation }: any) {
   const ProfileHeader = () => {
     return (
       <View>
-        {userName && userName !== '' && (
+        {route?.params && (
           <Pressable onPress={() => navigation.navigate('My Profile')}>
             <Icon
               name={'arrow-back-outline'}
@@ -135,6 +144,14 @@ export default function EditProfile({ route, navigation }: any) {
     info = { ...info, profileImage: '' };
     setProfileInfo(info);
   };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={ProfileStyles.container}>

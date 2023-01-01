@@ -7,7 +7,6 @@ import Login from '../screens/Login/Login.screen';
 import { TOKEN, USERID } from '../utils/constants';
 import Snackbar from '../utils/Toast';
 import FeedDrawerMenu from './DrawerNavigation/FeedDrawerNavigation';
-import MyTabs from './TabNavigation/BottomTabNavigation';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -131,11 +130,6 @@ const MainNavigation = () => {
               name="Login"
               options={{ headerShown: false }}
               component={Login}
-            />
-            <Stack.Screen
-              name="BottomTabs"
-              options={{ headerShown: false }}
-              component={MyTabs}
             />
           </Stack.Navigator>
         )}

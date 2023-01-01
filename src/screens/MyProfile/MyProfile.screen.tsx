@@ -87,12 +87,15 @@ export default function MyProfile({ navigation }: any) {
   };
 
   const editProfile = () => {
-    navigation.navigate('EditProfile', {
-      profile: {
-        name: profileInfo.username,
-        phoneno: profileInfo.phoneNumber,
-        imageUrl: profileInfo.profileImage,
-        email: profileInfo.email,
+    navigation.navigate('Home', {
+      screen: 'EditProfile',
+      params: {
+        profile: {
+          name: profileInfo.username,
+          phoneno: profileInfo.phoneNumber,
+          imageUrl: profileInfo.profileImage,
+          email: profileInfo.email,
+        },
       },
     });
   };

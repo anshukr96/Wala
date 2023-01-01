@@ -14,13 +14,15 @@ export const GetUserDetails = async (id: string) => {
   const request = await $axios
     .get(`${BASE_URL}/user/${id}`)
     .then(res => {
-      return { data: res.data.data, error: null };
+      if (res.status === 200) {
+        return { data: res.data.data, error: null };
+      } else {
+        return { data: null, error: null };
+      }
     })
     .catch(err => {
       return { error: err.response.data, data: null };
     });
-
-  console.log(request, 'requestinfo');
 
   return request;
 };

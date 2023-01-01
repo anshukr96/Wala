@@ -19,6 +19,7 @@ export type DrawerParamList = {
   FAQ: undefined;
   Feedback: undefined;
   ['Sign Out']: undefined;
+  EditProfile: undefined;
 };
 
 export type StackParamList = {
@@ -54,7 +55,7 @@ const FeedDrawerMenu = () => {
           backgroundColor: '#90EE90',
         },
       }}>
-      <Stack.Screen
+      <Drawer.Screen
         name="EditProfile"
         component={EditProfile}
         options={{
