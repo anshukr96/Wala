@@ -128,20 +128,25 @@ export default function MyProfile({ navigation }: any) {
       profileInfo.networks &&
       profileInfo.networks.map(list => {
         return (
-          <View style={ProfileStyles.header} key={list.name}>
-            <NormalText style={ProfileStyles.listname}>{list.name}</NormalText>
-            <NormalText style={ProfileStyles.listname}>
+          <View
+            key={list.name}
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ flex: 1, textAlign: 'center' }}>{list.name}</Text>
+            <Text style={{ flex: 1, textAlign: 'center' }}>
               {list.type === NETWORK_LIST.ALUMNI
                 ? 'Email'
                 : `PIN: ${list.joiningCode}`}
-            </NormalText>
-            <Pressable
-              onPress={() => {
-                setIsDeletePopup(true);
-                setSelectedNetwork(list._id);
-              }}>
-              <Icon name="trash-outline" size={16} />
-            </Pressable>
+            </Text>
+            <Text style={{ flex: 1, textAlign: 'center' }}>
+              {' '}
+              <Pressable
+                onPress={() => {
+                  setIsDeletePopup(true);
+                  setSelectedNetwork(list._id);
+                }}>
+                <Icon name="trash-outline" size={16} />
+              </Pressable>
+            </Text>
           </View>
         );
       })

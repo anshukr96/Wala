@@ -3,7 +3,7 @@ import { Image, Linking, Pressable, View } from 'react-native';
 import Share from 'react-native-share';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { DeletePost } from '../../api/feeds';
-import ImageModal from '../../Modal/ImageModal';
+import ImageCarousel from '../../Modal/ImageCarousel';
 import { MENU_OPTIONS, OptionProps } from '../../utils/constants';
 import Snackbar from '../../utils/Toast';
 import SecondaryButton from '../Button/SecondaryButton';
@@ -21,6 +21,7 @@ export default function Card({
   const [options, setOptions] = useState<OptionProps[]>(MENU_OPTIONS);
   const [isMenuOpened, setIsMenuOpened] = useState(false);
   const [isExpand, setIsExpand] = useState(false);
+  const [isImageShow, setIsImageShow] = useState(false);
 
   const onRadioBtnClick = (item: OptionProps) => {
     let updatedState = options.map(isSelectedItem =>
@@ -38,7 +39,7 @@ export default function Card({
   };
 
   const showImageModal = () => {
-    ImageModal(posts.images[0]);
+    setIsImageShow(true);
   };
 
   const shareOnWhatsapp = () => {
@@ -149,10 +150,14 @@ export default function Card({
             <View>
               <BoldText>{posts.title}</BoldText>
               <View style={{ flexDirection: 'row' }}>
-                <NormalText style={CardStyles.info}>Price: Rs </NormalText>
-                <NormalText style={CardStyles.info}>
-                  {posts.freeGiveAway ? 'Free giveaway' : posts.price}
-                </NormalText>
+                <NormalText style={CardStyles.info}>Price: </NormalText>
+                <BoldText style={CardStyles.info}>
+                  {posts.freeGiveAway
+                    ? 'Free giveaway'
+                    : !posts.price
+                    ? 'N/A'
+                    : `Rs ${posts.price}`}
+                </BoldText>
               </View>
             </View>
 
@@ -209,6 +214,13 @@ export default function Card({
             {posts?.details}
           </NormalText>
         </View>
+      )}
+
+      {isImageShow && (
+        <ImageCarousel
+          images={posts.images}
+          onModalClose={() => setIsImageShow(false)}
+        />
       )}
     </View>
   );

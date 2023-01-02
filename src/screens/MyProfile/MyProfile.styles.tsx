@@ -11,7 +11,6 @@ export default StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
     marginTop: 24,
   },
   profile: {
@@ -45,7 +44,8 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   block: {
-    marginRight: 60,
+    marginRight: 125,
+    marginVertical: 12,
   },
   button: {
     width: '64%',

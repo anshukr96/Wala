@@ -16,8 +16,8 @@ export type DrawerParamList = {
   ['My Profile']: undefined;
   ['My Listing']: undefined;
   AddNetwork: undefined;
-  FAQ: undefined;
-  Feedback: undefined;
+  ['Help Center']: undefined;
+  ['Contact Us']: undefined;
   ['Sign Out']: undefined;
   EditProfile: undefined;
 };
@@ -65,8 +65,8 @@ const FeedDrawerMenu = () => {
       <Drawer.Screen name="Home" component={FeedStackScreen} />
       <Drawer.Screen name="My Listing" component={ExistingListings} />
       <Drawer.Screen name="My Profile" component={MyProfile} />
-      <Drawer.Screen name="FAQ" component={FAQ} />
-      <Drawer.Screen name="Feedback" component={Feedback} />
+      <Drawer.Screen name="Help Center" component={FAQ} />
+      <Drawer.Screen name="Contact Us" component={Feedback} />
       <Drawer.Screen name="Sign Out" component={Signout} />
     </Drawer.Navigator>
   );

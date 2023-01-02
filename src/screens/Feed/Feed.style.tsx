@@ -25,7 +25,7 @@ const FeedStyles = StyleSheet.create({
     alignItems: 'center',
   },
   searchWrapper: {
-    marginLeft: 4,
+    marginHorizontal: 16,
   },
   addNetwork: {
     flexDirection: 'row',

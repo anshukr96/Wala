@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 
 export enum NETWORK_LIST {
   ALUMNI = 'ALUMINI',
@@ -68,6 +68,9 @@ export const NETWORK_LISTING = [
   { id: 2, name: 'DLF Corporate Park', selected: false },
   { id: 3, name: 'ISB Alumni', selected: false },
 ];
+
+export const WINDOW_WIDTH = Dimensions.get('window').width;
+export const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 export interface OptionProps {
   _id: string;

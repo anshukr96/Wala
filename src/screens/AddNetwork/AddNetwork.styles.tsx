@@ -40,6 +40,7 @@ export default StyleSheet.create({
     width: '100%',
     height: 50,
     color: '#344953',
+    backgroundColor: 'white',
   },
   headerText: {
     fontSize: 24,

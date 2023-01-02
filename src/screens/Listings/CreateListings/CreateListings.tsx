@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Image, Pressable, ScrollView, View } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { Alert, Image, Pressable, ScrollView, View } from 'react-native';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { CreatePost, UpdatePost } from '../../../api/feeds';
 import { GetNetworkList } from '../../../api/network';
@@ -50,6 +50,7 @@ export default function CreateListings({ navigation, route }: any) {
     freeGiveAway: false,
   });
   const [photoInfo, setPhotoInfo] = useState<string[]>([]);
+  const [isEditable, setIsEditable] = useState(true);
   const [networkList, setNetworkList] = useState([
     {
       _id: '',
@@ -100,6 +101,7 @@ export default function CreateListings({ navigation, route }: any) {
           message: 'Please deselect Free Giveaway to add price',
         })
       : null;
+    !listingInfo.freeGiveAway ? setIsEditable(true) : setIsEditable(false);
   };
 
   const getNetworkDetails = async () => {
@@ -174,6 +176,9 @@ export default function CreateListings({ navigation, route }: any) {
     if (listingInfo.freeGiveAway) {
       delete body.price;
     }
+    if (!listingInfo.freeGiveAway && listingInfo.price === '') {
+      delete body.price;
+    }
     if (!photoInfo.length) {
       delete body.images;
     }
@@ -239,6 +244,47 @@ export default function CreateListings({ navigation, route }: any) {
   };
 
   const uploadPhoto = async () => {
+    Alert.alert(
+      'Upload Photo',
+      'How do you want to upload photo?',
+      [
+        {
+          text: 'Camera',
+          onPress: () => {
+            uploadFromPhoto();
+          },
+          style: 'destructive',
+        },
+        {
+          text: 'Gallery',
+          onPress: () => {
+            uploadFromGallery();
+          },
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true },
+    );
+  };
+
+  const uploadFromPhoto = async () => {
+    const { assets } = await launchCamera(cameraOptions);
+    if (assets?.length) {
+      const { data } = await UploadMedia(assets[0]);
+      if (data) {
+        const photos = [...photoInfo];
+        photos.push(data);
+        setPhotoInfo(photos);
+      } else {
+        Snackbar({
+          type: 'error',
+          message: 'Unable to upload image',
+        });
+      }
+    }
+  };
+
+  const uploadFromGallery = async () => {
     const { assets } = await launchImageLibrary(cameraOptions);
     if (assets?.length) {
       const { data } = await UploadMedia(assets[0]);
@@ -394,15 +440,16 @@ export default function CreateListings({ navigation, route }: any) {
               placeholder={'Price'}
               value={listingInfo.price}
               onFocus={onPriceFocus}
-              editable={!listingInfo.freeGiveAway}
+              editable={isEditable}
               keyboardType="numeric"
               style={{ width: '30%' }}
             />
             <SecondaryButton
               title="Free giveaway!"
-              onPress={() =>
-                updateDetails(!listingInfo.freeGiveAway, 'freeGiveAway')
-              }
+              onPress={() => {
+                updateDetails(!listingInfo.freeGiveAway, 'freeGiveAway');
+                setIsEditable(true);
+              }}
               style={{
                 height: 40,
                 marginRight: 12,

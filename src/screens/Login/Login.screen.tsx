@@ -58,7 +58,7 @@ export default function Login({ navigation }: Props) {
     if (!otp.length) {
       Snackbar({
         type: 'error',
-        message: 'Please enter the OTP sent to mobile number',
+        message: `Please enter the OTP sent to ${phoneNumber}`,
         position: 'bottom',
       });
       return;
@@ -72,7 +72,7 @@ export default function Login({ navigation }: Props) {
     if (data) {
       signIn(data);
     } else {
-      Snackbar({ type: 'error', message: error, position: 'bottom' });
+      Snackbar({ type: 'error', message: 'Incorrect OTP', position: 'bottom' });
     }
   };
 

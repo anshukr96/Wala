@@ -15,6 +15,7 @@ import SecondaryButton from '../../components/Button/SecondaryButton';
 import Card from '../../components/Card/Card';
 import PrimaryInput from '../../components/Input';
 import BoldText from '../../components/Text/BoldText';
+import { sortbyCreateDate } from '../../helpers/sort';
 import { useDebounce } from '../../hooks/useDebounce';
 import { StackParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
 import Snackbar from '../../utils/Toast';
@@ -23,8 +24,10 @@ import FeedStyles from './Feed.style';
 type Props = DrawerScreenProps<StackParamList, 'Feeds'>;
 
 interface FeedHeaderProps {
+  isSort: boolean;
   onMenuToggle: () => void;
   onPress: () => void;
+  onSort: () => void;
   onSearch: (text: string) => void;
 }
 
@@ -32,6 +35,7 @@ const Feed = ({ navigation }: Props) => {
   const [feedList, setFeedList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isSearch, setIsSearch] = useState(false);
+  const [isSort, setIsSort] = useState(false);
 
   useEffect(() => {
     fetchPostList();
@@ -58,6 +62,13 @@ const Feed = ({ navigation }: Props) => {
       });
       setLoading(false);
     }
+  };
+
+  const onSort = () => {
+    const sortType = !isSort ? 'asc' : 'desc';
+    const sortedFeeds = sortbyCreateDate(feedList, sortType);
+    setFeedList(sortedFeeds);
+    setIsSort(sort => !sort);
   };
 
   const onPostSearch = (searchText: string) => {
@@ -115,13 +126,13 @@ const Feed = ({ navigation }: Props) => {
     );
   }
 
-  if (!feedList.length && isSearch) {
+  const renderNoSearch = () => {
     return (
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
         <BoldText>Sorry, no matches found"</BoldText>
       </View>
     );
-  }
+  };
 
   return (
     <>
@@ -130,8 +141,14 @@ const Feed = ({ navigation }: Props) => {
         onMenuToggle={() => navigation.toggleDrawer()}
         onPress={() => navigation.navigate('My Listing')}
         onSearch={(text: string) => onPostSearch(text)}
+        onSort={onSort}
+        isSort={isSort}
       />
-      {feedList.length ? renderPosts() : renderNoNetwork()}
+      {!feedList.length && isSearch
+        ? renderNoSearch()
+        : feedList.length
+        ? renderPosts()
+        : renderNoNetwork()}
     </>
   );
 };
@@ -140,6 +157,8 @@ export const FeedHeader = ({
   onMenuToggle,
   onPress,
   onSearch,
+  onSort,
+  isSort,
 }: FeedHeaderProps) => {
   const [toShowSearchInput, settoShowSearchInput] = useState(false);
   const [searchVal, setSearchVal] = useState('');
@@ -171,6 +190,14 @@ export const FeedHeader = ({
           style={FeedStyles.searchWrapper}
           onPress={() => settoShowSearchInput(input => !input)}>
           <Icon name={'ios-search'} size={24} color={'black'} />
+        </Pressable>
+
+        <Pressable style={{ marginHorizontal: 8 }} onPress={onSort}>
+          <Icon
+            name={isSort ? 'ios-funnel' : 'ios-funnel-outline'}
+            size={24}
+            color={'black'}
+          />
         </Pressable>
       </View>
     </View>

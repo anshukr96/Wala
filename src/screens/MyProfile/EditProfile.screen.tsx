@@ -79,7 +79,7 @@ export default function EditProfile({ route, navigation }: any) {
     if (profileInfo.username === '') {
       return Snackbar({
         type: 'error',
-        message: 'Username is mandatory',
+        message: 'name is mandatory',
       });
     }
     const requestbody = {
@@ -212,7 +212,7 @@ export default function EditProfile({ route, navigation }: any) {
             <BoldText>Name:</BoldText>
             <PrimaryInput
               onChangeText={text => updateDetails(text, 'username')}
-              placeholder={'Pleae enter your name'}
+              placeholder={'Please enter your name'}
               value={profileInfo.username}
               style={{ width: 250 }}
             />
