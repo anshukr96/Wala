@@ -129,7 +129,7 @@ const Feed = ({ navigation }: Props) => {
   const renderNoSearch = () => {
     return (
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <BoldText>Sorry, no matches found"</BoldText>
+        <BoldText>Sorry, no matches found</BoldText>
       </View>
     );
   };

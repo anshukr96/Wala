@@ -9,7 +9,6 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../utils/constants';
 
 export default function ImageCarousel({ images, onModalClose }: any) {
   const [visible, setVisible] = useState(true);
@@ -46,7 +45,8 @@ export default function ImageCarousel({ images, onModalClose }: any) {
               source={{
                 uri: images[current],
               }}
-              style={{ width: WINDOW_WIDTH - 30, height: WINDOW_HEIGHT / 2 }}
+              resizeMode="contain"
+              // style={{ width: WINDOW_WIDTH - 30, height: WINDOW_HEIGHT / 2 }}
             />
           </View>
 
@@ -60,7 +60,7 @@ export default function ImageCarousel({ images, onModalClose }: any) {
             <TouchableOpacity
               onPress={() => setCurrent(current + 1)}
               disabled={current === images.length - 1}>
-              <Text>Next</Text>
+              <Text>{`Next ${current + 1}/${images.length}`}</Text>
             </TouchableOpacity>
           </View>
         </View>

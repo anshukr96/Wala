@@ -95,7 +95,9 @@ export default function Login({ navigation }: Props) {
           {!isOTP ? (
             <Text style={styles.text}>Please enter your phone number</Text>
           ) : (
-            <Text style={styles.text}>We've sent an OTP on input phone</Text>
+            <Text style={styles.text}>
+              Please enter the OTP sent to ${phoneNumber}
+            </Text>
           )}
 
           <PrimaryInput

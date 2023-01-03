@@ -79,7 +79,7 @@ export default function EditProfile({ route, navigation }: any) {
     if (profileInfo.username === '') {
       return Snackbar({
         type: 'error',
-        message: 'name is mandatory',
+        message: 'Name is mandatory',
       });
     }
     const requestbody = {
@@ -202,9 +202,11 @@ export default function EditProfile({ route, navigation }: any) {
             )}
           </Pressable>
 
-          <Pressable onPress={showPhotoDeleteAlert}>
-            <Icon name={'ios-trash-outline'} size={30} color={'black'} />
-          </Pressable>
+          {profileInfo.profileImage !== '' && (
+            <Pressable onPress={showPhotoDeleteAlert}>
+              <Icon name={'ios-trash-outline'} size={30} color={'black'} />
+            </Pressable>
+          )}
         </View>
 
         <View style={ProfileStyles.info}>
