@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useEffect, useState } from 'react';
 import {
@@ -10,6 +11,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { GetPostsList } from '../../api/feeds';
+import { GetUserDetails } from '../../api/user';
 import PrimaryButton from '../../components/Button/PrimaryButton';
 import SecondaryButton from '../../components/Button/SecondaryButton';
 import Card from '../../components/Card/Card';
@@ -18,6 +20,7 @@ import BoldText from '../../components/Text/BoldText';
 import { sortbyCreateDate } from '../../helpers/sort';
 import { useDebounce } from '../../hooks/useDebounce';
 import { StackParamList } from '../../navigation/DrawerNavigation/FeedDrawerNavigation';
+import { USERID } from '../../utils/constants';
 import Snackbar from '../../utils/Toast';
 import FeedStyles from './Feed.style';
 
@@ -33,12 +36,15 @@ interface FeedHeaderProps {
 
 const Feed = ({ navigation }: Props) => {
   const [feedList, setFeedList] = useState([]);
+  const [netowrklist, setNetworkList] = useState('');
   const [loading, setLoading] = useState(true);
   const [isSearch, setIsSearch] = useState(false);
   const [isSort, setIsSort] = useState(false);
 
   useEffect(() => {
     fetchPostList();
+    getUserInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -49,8 +55,13 @@ const Feed = ({ navigation }: Props) => {
     return unsubscribe;
   }, [navigation]);
 
-  const fetchPostList = async (text = '') => {
-    const { data } = await GetPostsList(text);
+  const fetchPostList = async (text = '', networks = '') => {
+    const searchParam = {
+      ...(text !== '' && { text }),
+      ...(networks !== '' && { networks }),
+    };
+
+    const { data } = await GetPostsList(searchParam);
     if (data) {
       setFeedList(data);
       setLoading(false);
@@ -64,6 +75,25 @@ const Feed = ({ navigation }: Props) => {
     }
   };
 
+  const getUserInfo = async () => {
+    const userID = await AsyncStorage.getItem(USERID);
+    const { data } = await GetUserDetails(userID || '');
+    if (data) {
+      const associatedNetworks = data?.networks?.map(
+        (network: Record<string, string>) => network._id,
+      );
+      let netwrk = associatedNetworks.join(', ');
+      fetchPostList('', netwrk);
+      setNetworkList(netwrk);
+    } else {
+      Snackbar({
+        type: 'error',
+        message: 'Unable to fetch network details,',
+      });
+      navigation.goBack();
+    }
+  };
+
   const onSort = () => {
     const sortType = !isSort ? 'asc' : 'desc';
     const sortedFeeds = sortbyCreateDate(feedList, sortType);
@@ -72,7 +102,7 @@ const Feed = ({ navigation }: Props) => {
   };
 
   const onPostSearch = (searchText: string) => {
-    fetchPostList(searchText);
+    fetchPostList(searchText, netowrklist);
     searchText === '' ? setIsSearch(false) : setIsSearch(true);
   };
 

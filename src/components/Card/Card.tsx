@@ -32,6 +32,11 @@ export default function Card({
     setOptions(updatedState);
   };
 
+  const getPostNetwork = () => {
+    const network = posts?.networks?.map((list: any) => list.name);
+    return network.join(', ');
+  };
+
   const shareOnMail = () => {
     Linking.openURL(
       'mailto:support@example.com?subject=SendMail&body=Description',
@@ -182,7 +187,7 @@ export default function Card({
             </View>
             <View style={CardStyles.details}>
               <NormalText style={CardStyles.detailText}>Connection:</NormalText>
-              <BoldText>{posts.networks[0]?.name}</BoldText>
+              <BoldText>{getPostNetwork()}</BoldText>
             </View>
 
             {!isEdit && (

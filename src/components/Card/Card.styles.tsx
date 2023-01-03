@@ -9,7 +9,7 @@ export default StyleSheet.create({
     elevation: 20,
     shadowColor: '#90EE90',
     padding: 8,
-    margin: 16,
+    margin: 12,
   },
   container: {
     flexDirection: 'row',
@@ -38,6 +38,7 @@ export default StyleSheet.create({
   },
   details: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   header: {
     flexDirection: 'row',

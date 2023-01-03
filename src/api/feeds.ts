@@ -6,11 +6,12 @@ import { BASE_URL } from '../utils/constants';
  * @returns
  */
 
-export const GetPostsList = async (searchText: string) => {
-  const url =
-    searchText === ''
-      ? `${BASE_URL}/post?published=true`
-      : `${BASE_URL}/post?published=true&text=${searchText}`;
+export const GetPostsList = async (searchParam: Record<any, any>) => {
+  const queryString = Object.entries(searchParam)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&');
+
+  let url = `${BASE_URL}/post?published=true&${queryString}`;
 
   const request = await $axios
     .get(url)

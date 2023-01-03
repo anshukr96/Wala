@@ -46,7 +46,7 @@ export default function ImageCarousel({ images, onModalClose }: any) {
                 uri: images[current],
               }}
               resizeMode="contain"
-              // style={{ width: WINDOW_WIDTH - 30, height: WINDOW_HEIGHT / 2 }}
+              style={{ width: 400, height: 200 }}
             />
           </View>
 
