@@ -3,12 +3,19 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 
 interface PrimaryButtonProps {
   title: string;
-  onPress: () => void;
+  onPress?: () => void;
+  style?: Record<string, any>;
 }
 
-export default function PrimaryButton({ title, onPress }: PrimaryButtonProps) {
+export default function SecondaryButton({
+  title,
+  onPress,
+  style,
+}: PrimaryButtonProps) {
   return (
-    <Pressable style={styles.button} onPress={onPress}>
+    <Pressable
+      style={style ? { ...styles.button, ...style } : { ...styles.button }}
+      onPress={onPress}>
       <Text style={styles.text}>{title}</Text>
     </Pressable>
   );
@@ -18,10 +25,11 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
-    borderRadius: 8,
+    padding: 10,
+    paddingHorizontal: 16,
+    borderRadius: 4,
     elevation: 3,
-    backgroundColor: '#0096FF',
+    backgroundColor: '#65a765',
   },
   text: {
     fontSize: 16,

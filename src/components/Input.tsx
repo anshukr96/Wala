@@ -1,23 +1,38 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import { KeyboardTypeOptions, StyleSheet, TextInput } from 'react-native';
 
 interface PrimaryInputProps {
   value: string;
   onChangeText: Dispatch<SetStateAction<string>>;
   placeholder?: string;
+  maxLength?: number;
+  style?: Record<string, string | number>;
+  keyboardType?: KeyboardTypeOptions | undefined;
+  onFocus?: any;
+  editable?: boolean;
 }
 
 export default function PrimaryInput({
   value,
   onChangeText,
+  onFocus,
   placeholder,
+  maxLength,
+  keyboardType,
+  editable = true,
+  style,
 }: PrimaryInputProps) {
   return (
     <TextInput
-      style={styles.input}
+      style={style ? { ...styles.input, ...style } : { ...styles.input }}
       onChangeText={onChangeText}
       placeholder={placeholder || ''}
       value={value}
+      maxLength={maxLength}
+      keyboardType={keyboardType}
+      editable={editable}
+      onFocus={onFocus}
+      placeholderTextColor="#454545"
     />
   );
 }
@@ -30,5 +45,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: '#D3D3D3',
     borderRadius: 8,
+    color: 'black',
+    backgroundColor: '#dadce0',
   },
 });
