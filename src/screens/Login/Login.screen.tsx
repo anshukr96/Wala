@@ -96,7 +96,7 @@ export default function Login({ navigation }: Props) {
             <Text style={styles.text}>Please enter your phone number</Text>
           ) : (
             <Text style={styles.text}>
-              Please enter the OTP sent to ${phoneNumber}
+              Please enter the OTP sent to {phoneNumber}
             </Text>
           )}
 

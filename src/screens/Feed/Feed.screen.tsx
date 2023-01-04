@@ -3,6 +3,7 @@ import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  AppState,
   Pressable,
   ScrollView,
   StatusBar,
@@ -40,6 +41,24 @@ const Feed = ({ navigation }: Props) => {
   const [loading, setLoading] = useState(true);
   const [isSearch, setIsSearch] = useState(false);
   const [isSort, setIsSort] = useState(false);
+
+  const [appState, setAppState] = useState(AppState.currentState);
+
+  useEffect(() => {
+    function handleAppStateChange(nextAppState: any) {
+      if (appState.match(/inactive|background/) && nextAppState === 'active') {
+        fetchPostList();
+        console.log('fetch api called');
+      }
+      setAppState(nextAppState);
+    }
+
+    const subs = AppState.addEventListener('change', handleAppStateChange);
+
+    return () => {
+      subs.remove();
+    };
+  }, [appState]);
 
   useEffect(() => {
     fetchPostList();

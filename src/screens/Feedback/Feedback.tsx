@@ -16,6 +16,13 @@ export default function Feedback({ navigation }: any) {
   const [feedback, setFeedback] = useState('');
 
   const sendFeedback = async () => {
+    if (selectedOption === '') {
+      return Snackbar({
+        type: 'error',
+        message: 'Please choose one reason',
+      });
+    }
+
     const requestBody = {
       text: feedback,
       reason: selectedOption,

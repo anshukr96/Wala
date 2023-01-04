@@ -9,6 +9,8 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import NormalText from '../components/Text/NormalText';
+import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../utils/constants';
 
 export default function ImageCarousel({ images, onModalClose }: any) {
   const [visible, setVisible] = useState(true);
@@ -26,7 +28,7 @@ export default function ImageCarousel({ images, onModalClose }: any) {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={showModal}>
-        <Text>Open Modal</Text>
+        <NormalText>Open Modal</NormalText>
       </TouchableOpacity>
       <Modal
         animationType="slide"
@@ -46,7 +48,7 @@ export default function ImageCarousel({ images, onModalClose }: any) {
                 uri: images[current],
               }}
               resizeMode="contain"
-              style={{ width: 400, height: 200 }}
+              style={{ width: WINDOW_WIDTH, height: WINDOW_HEIGHT - 100 }}
             />
           </View>
 
@@ -54,13 +56,13 @@ export default function ImageCarousel({ images, onModalClose }: any) {
             <TouchableOpacity
               onPress={() => setCurrent(current - 1)}
               disabled={current === 0}>
-              <Text>Prev</Text>
+              <NormalText>Prev</NormalText>
             </TouchableOpacity>
             <Text>{current + 1}</Text>
             <TouchableOpacity
               onPress={() => setCurrent(current + 1)}
               disabled={current === images.length - 1}>
-              <Text>{`Next ${current + 1}/${images.length}`}</Text>
+              <NormalText>{`Next ${current + 1}/${images.length}`}</NormalText>
             </TouchableOpacity>
           </View>
         </View>
